@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="{{ lang or 'en' }}">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JANAVAAKYA – Voice of the People | Premium Editorial</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- Main Style -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script>
+        window.userRole = "{{ session.get('role', 'guest') }}";
+    </script>
+    <style>
+        /* Header Account Dropdown - Global Styles */
+        .header-account-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .user-dropdown-menu {
+            position: absolute;
+            top: calc(100% + 15px);
+            right: 0;
+            width: 240px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            border: 1px solid #e2e8f0;
+            display: none;
+            z-index: 9999;
+            overflow: hidden;
+        }
+
+        .user-dropdown-menu.active {
+            display: block;
+            animation: dropSlideIn 0.2s ease-out;
+        }
+
+        .dropdown-header {
+            padding: 18px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #f8fafc;
+        }
+
+        .user-avatar-mini {
+            width: 32px;
+            height: 32px;
+            background: #1e1b4b;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 0.8rem;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-label {
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: #94a3b8;
+            letter-spacing: 0.5px;
+        }
+
+        .user-name {
+            font-size: 0.9rem;
+            font-weight: 800;
+            color: #1e293b;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: #f1f5f9;
+        }
+
+        .dropdown-item {
+            display: block;
+            padding: 12px 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #475569;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .dropdown-item:hover {
+            background: #f8fafc;
+            color: #4f46e5;
+            padding-left: 24px;
+        }
+
+        .text-danger:hover {
+            color: #ef4444 !important;
+        }
+
+        @keyframes dropSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Language Toggle Styles */
+        .btn-lang-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: #fff;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 12px;
+            color: #1e293b;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+            text-decoration: none;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-lang-toggle:hover {
+            border-color: #4f46e5;
+            color: #4f46e5;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.1);
+        }
+
+        .btn-lang-toggle .lang-code {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            background: #f1f5f9;
+            border-radius: 6px;
+            font-size: 10px;
+            color: #64748b;
+            transition: all 0.25s;
+        }
+
+        .btn-lang-toggle:hover .lang-code {
+            background: #e0e7ff;
+            color: #4f46e5;
+        }
+
+        /* Global Up-to-date Notice Box Styles */
+        :root {
+            --ivory-bg: #fdfaf3;
+            --border-ivory: #f1ede4;
+            --deep-crimson: #8b0000;
+            --slate-dark: #1e293b;
+            --slate-mute: #64748b;
+            --gold-muted: #b4975a;
+        }
+
+        .notice-box-wrap {
+            background: #fff;
+            border: 1.5px solid #f1ede4;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+            margin-top: 1.5rem;
+            box-shadow: 0 8px 30px -10px rgba(139,0,0,0.08);
+        }
+        .notice-box-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.9rem 1.75rem;
+            background: linear-gradient(90deg, #8b0000 0%, #b91c1c 100%);
+            color: #fff;
+        }
+        .notice-pulse-dot {
+            width: 10px; height: 10px;
+            background: #fbbf24;
+            border-radius: 50%;
+            flex-shrink: 0;
+            animation: noticePulse 1.4s ease-in-out infinite;
+        }
+        @keyframes noticePulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.4); }
+        }
+        .notice-box-title {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 900;
+            font-size: 0.75rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            flex-shrink: 0;
+        }
+        .notice-box-sub {
+            font-size: 0.78rem;
+            opacity: 0.85;
+            font-weight: 500;
+            margin-left: auto;
+        }
+        .notice-scroll-track {
+            overflow: hidden;
+            padding: 1rem 0;
+            cursor: pointer;
+        }
+        .notice-scroll-inner {
+            display: flex;
+            gap: 1rem;
+            width: max-content;
+            animation: noticeScroll 40s linear infinite;
+            padding: 0 1.5rem;
+        }
+        .notice-scroll-inner:hover { animation-play-state: paused; }
+        @keyframes noticeScroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .notice-card {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            background: var(--ivory-bg);
+            border: 1.5px solid var(--border-ivory);
+            border-radius: 16px;
+            padding: 0.6rem 1rem 0.6rem 0.6rem;
+            min-width: 220px;
+            max-width: 220px;
+            cursor: pointer;
+            transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;
+            flex-shrink: 0;
+            text-decoration: none;
+            color: inherit;
+        }
+        .notice-card:hover {
+            border-color: var(--deep-crimson);
+            box-shadow: 0 6px 20px -6px rgba(139,0,0,0.18);
+            transform: translateY(-2px);
+        }
+        .notice-card-photo {
+            width: 48px; height: 48px;
+            border-radius: 12px;
+            overflow: hidden;
+            flex-shrink: 0;
+            background: #f1ede4;
+        }
+        .notice-card-photo img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            object-position: top center;
+        }
+        .notice-no-photo {
+            width: 100%; height: 100%;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--slate-mute);
+        }
+        .notice-card-info { flex: 1; min-width: 0; }
+        .notice-missing-badge {
+            display: inline-block;
+            background: #8b0000;
+            color: #fff;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 900;
+            font-size: 0.5rem;
+            letter-spacing: 1.2px;
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
+            margin-bottom: 0.2rem;
+        }
+        .notice-card-name {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 0.82rem;
+            color: var(--slate-dark);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin: 0;
+            line-height: 1.2;
+        }
+        .notice-card-meta {
+            font-size: 0.7rem;
+            color: var(--slate-mute);
+            font-weight: 600;
+            margin: 0.1rem 0;
+        }
+        .notice-card-loc {
+            display: flex;
+            align-items: center;
+            gap: 0.2rem;
+            font-size: 0.65rem;
+            color: var(--slate-mute);
+            font-weight: 500;
+            margin: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    </style>
+</head>
+
+<body
+    class="{{ 'landing-page' if request.endpoint == 'landing' else ('settings-page' if request.path == '/profile' else 'dashboard-page' if request.path == '/' and session.get('user') else '') }}">
+    <header class="header">
+        <div class="nav-main container">
+            <div class="nav-left">
+                {% block nav_left %}
+                <button class="btn-sections" id="sidebarToggle" aria-label="Open Sections">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                    <span>SECTIONS</span>
+                </button>
+                {% endblock %}
+            </div>
+
+            {% block header_brand %}
+            <a href="/" class="header-brand">
+                <div class="brand-main">
+                    <svg class="brand-logo-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="brandGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#e31837;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#9b111e;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        <!-- Stylized 'V' for Voice / News Fold -->
+                        <path d="M20 20 L50 80 L80 20" fill="none" stroke="url(#brandGradient)" stroke-width="12"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                        <!-- Decorative Echo/Voice waves -->
+                        <path d="M40 45 Q50 35 60 45" fill="none" stroke="url(#brandGradient)" stroke-width="6"
+                            stroke-linecap="round" opacity="0.6" />
+                        <path d="M35 55 Q50 40 65 55" fill="none" stroke="url(#brandGradient)" stroke-width="6"
+                            stroke-linecap="round" opacity="0.4" />
+                    </svg>
+                    <span class="brand-text">JANAVAAKYA</span>
+                </div>
+                <span class="brand-tagline">Voice of the People</span>
+            </a>
+            {% endblock %}
+
+            <div class="nav-right">
+                {% block nav_right %}
+                <div class="header-actions">
+                    <a href="/set_language/{{ 'en' if session.get('lang') == 'ml' else 'ml' }}" class="btn-lang-toggle" title="Switch Language">
+                        <span class="lang-code">
+                            {{ 'EN' if session.get('lang') == 'ml' else 'ML' }}
+                        </span>
+                        <span>{{ 'ENGLISH' if session.get('lang') == 'ml' else 'MALAYALAM' }}</span>
+                    </a>
+                </div>
+                {% if session.get('user') %}
+                <div class="header-account-dropdown">
+                    <button class="btn-sign-in" id="userMenuToggle">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        <span>My Account</span>
+                    </button>
+                    <div class="user-dropdown-menu" id="userMenu">
+                        <div class="dropdown-header">
+                            <div class="user-avatar-mini">{{ session.get('user')[0]|upper if session.get('user') else
+                                'U' }}</div>
+                            <div class="user-info">
+                                <span class="user-label">SIGNED IN AS</span>
+                                <span class="user-name">{{ session.get('user', 'User') }}</span>
+                            </div>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        {% if session.get('role') == 'advertiser' %}
+                        <a href="/advertiser" class="dropdown-item" style="color: #6366f1; font-weight: 800;">DASHBOARD</a>
+                        <div class="dropdown-divider"></div>
+                        {% endif %}
+                        <a href="/profile" class="dropdown-item">MY PROFILE</a>
+                        <a href="/history" class="dropdown-item">HISTORY</a>
+                        <a href="/change-password" class="dropdown-item">CHANGE PASSWORD</a>
+                        <a href="/saved" class="dropdown-item">SAVED ITEMS</a>
+                        <div class="dropdown-divider"></div>
+                        <a href="/logout" class="dropdown-item text-danger">LOG OUT</a>
+                    </div>
+                </div>
+                {% else %}
+                <button class="btn-sign-in" data-modal="login">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <span>SIGN IN</span>
+                </button>
+                {% endif %}
+                {% endblock %}
+            </div>
+        </div>
+    </header>
+    {% block horizontal_nav %}
+    {% include '_horizontal_nav.html' %}
+    {% endblock %}
+
+    <!-- Global Up-to-date Notice -->
+    {% if global_approved_missing and session.user_id and request.path not in ['/landing', '/profile'] %}
+    <div class="container" style="max-width: 1200px;">
+        <div class="notice-box-wrap">
+            <div class="notice-box-header">
+                <div class="notice-pulse-dot"></div>
+                <span class="notice-box-title">UP-TO-DATE NOTICE</span>
+                <span class="notice-box-sub">{{ global_approved_missing|length }} Active Missing Case{% if global_approved_missing|length != 1 %}s{% endif %} — Help bring them home</span>
+            </div>
+            <div class="notice-scroll-track">
+                <div class="notice-scroll-inner">
+                    {% for person in global_approved_missing %}
+                    <a href="/missing-persons?id={{ person.id }}" class="notice-card">
+                        <div class="notice-card-photo">
+                            {% if person.image %}
+                            <img src="{{ person.image }}" alt="{{ person.name }}">
+                            {% else %}
+                            <div class="notice-no-photo">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="notice-card-info">
+                            <span class="notice-missing-badge">MISSING</span>
+                            <p class="notice-card-name">{{ person.name }}</p>
+                            <p class="notice-card-meta">Age {{ person.age }} &bull; {{ person.gender }}</p>
+                            <p class="notice-card-loc">
+                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                                {{ person.last_seen_location }}
+                            </p>
+                        </div>
+                    </a>
+                    {% endfor %}
+                    <!-- Duplicate for infinite scroll -->
+                    {% for person in global_approved_missing %}
+                    <a href="/missing-persons?id={{ person.id }}" class="notice-card">
+                        <div class="notice-card-photo">
+                            {% if person.image %}
+                            <img src="{{ person.image }}" alt="{{ person.name }}">
+                            {% else %}
+                            <div class="notice-no-photo">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="notice-card-info">
+                            <span class="notice-missing-badge">MISSING</span>
+                            <p class="notice-card-name">{{ person.name }}</p>
+                            <p class="notice-card-meta">Age {{ person.age }} &bull; {{ person.gender }}</p>
+                            <p class="notice-card-loc">
+                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                                {{ person.last_seen_location }}
+                            </p>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+
+
+    <!-- Modals -->
+    <div id="authModal" class="modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content animate-in">
+            <button class="modal-close">&times;</button>
+
+
+
+            <!-- Login Form -->
+            <div id="loginForm" class="auth-split-container">
+                <!-- Brand Side -->
+                <div class="auth-brand-side">
+                    <div class="auth-brand-content">
+                        <div class="auth-logo-wrap">
+                            <div class="auth-logo-icon">V</div>
+                            <div class="auth-brand-text">
+                                <span class="brand-java">JANAVAAKYA</span>
+                                <span class="brand-online">VOICE OF THE PEOPLE</span>
+                            </div>
+                        </div>
+                        <h1 class="auth-main-title">Sign In</h1>
+                        <p class="auth-switch-text">Are you a new user? <a href="#" data-switch="register">Create an
+                                Account</a></p>
+                    </div>
+                </div>
+
+                <!-- Form Side -->
+                <div class="auth-form-side">
+                    <form method="POST" action="/login" class="auth-form" autocomplete="off">
+                        <div class="form-group">
+                            <label>Email or Phone Number</label>
+                            <input type="text" id="login-username" name="username"
+                                placeholder="Enter your email or phone number" autocomplete="off" required
+                                pattern="^[a-zA-Z0-9_]{3,20}$" title="Please enter a valid username">
+                        </div>
+                        <div class="form-group">
+                            <div class="label-row">
+                                <label>Password</label>
+                            </div>
+                            <div class="password-input-wrapper">
+                                <input type="password" id="login-password" name="password"
+                                    placeholder="Enter your password" autocomplete="off" required
+                                    pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&_#\-.])[A-Za-z\d@$!%*?&_#\-.]{8,}$"
+                                    title="Strong password required (8+ chars, Uppercase, Lowercase, Number, Special)">
+                                <button type="button" class="password-toggle" id="password-toggle"
+                                    aria-label="Toggle password visibility">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                        class="toggle-icon-show">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                    </svg>
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                        class="toggle-icon-hide" style="display:none;">
+                                        <path
+                                            d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24">
+                                        </path>
+                                        <line x1="1" y1="1" x2="23" y2="23"></line>
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="auth-extra-links-row">
+                                <a href="/forgot-password" class="auth-link">Forgot Password?</a>
+                                <a href="#" class="auth-link login-otp">Login with OTP</a>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-signin-blue">Sign In</button>
+                    </form>
+
+                    <div class="auth-divider-thin">
+                        <span>OR CONTINUE WITH</span>
+                    </div>
+
+                    <div class="social-login-side-by-side">
+                        <a href="/login/google" class="social-btn-outline" style="width: 100%;">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg"
+                                alt="Google">
+                            Sign in with Google
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Register Form -->
+            <div id="registerForm" class="auth-split-container" style="display: none;">
+                <div class="auth-split-container">
+                    <!-- Brand Side -->
+                    <div class="auth-brand-side">
+                        <div class="auth-brand-content">
+                            <div class="auth-logo-wrap">
+                                <div class="auth-logo-icon">V</div>
+                                <div class="auth-brand-text">
+                                    <span class="brand-java">JANAVAAKYA</span>
+                                    <span class="brand-online">VOICE OF THE PEOPLE</span>
+                                </div>
+                            </div>
+                            <h1 class="auth-main-title">{{ t('join_aura') }}</h1>
+                            <p class="auth-subtitle">{{ t('create_account_desc') }}</p>
+                            <p class="auth-switch-text">{{ t('already_have_account') }} <a href="#"
+                                    data-switch="login">{{
+                                    t('signin_here') }}</a></p>
+                        </div>
+                    </div>
+
+                    <!-- Form Side -->
+                    <div class="auth-form-side">
+                        <form method="POST" action="/register" class="auth-form" autocomplete="off">
+                            <div class="form-group">
+                                <label>{{ t('fullname') }}</label>
+                                <input type="text" id="reg-fullname" name="fullname" placeholder="John Doe" value=""
+                                    required minlength="2">
+                            </div>
+                            <div class="form-group">
+                                <label>{{ t('username') }}</label>
+                                <input type="text" id="reg-username" name="username" placeholder="user_aura" value=""
+                                    autocomplete="off" required pattern="^[a-zA-Z0-9_]{3,20}$"
+                                    title="3-20 characters, alphanumeric and underscores only">
+                                <span id="username-error" class="validation-error"
+                                    style="display:none; color:#dc3545; font-size:12px; margin-top:4px; display:block;"></span>
+                            </div>
+                            <div class="form-group">
+                                <label>{{ t('email_address') }}</label>
+                                <input type="email" id="reg-email" name="email" placeholder="alice@example.com"
+                                    required>
+                                <span id="email-error" class="validation-error"
+                                    style="display:none; color:#dc3545; font-size:12px; margin-top:4px; display:block;"></span>
+                            </div>
+                            <div class="form-group">
+                                <label>Password</label>
+                                <div class="password-input-wrapper">
+                                    <input type="password" name="password" id="reg-password"
+                                        placeholder="e.g. Reporter@123" value="" autocomplete="off" required
+                                        pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&_#\-.])[A-Za-z\d@$!%*?&_#\-.]{8,}$"
+                                        title="At least 8 characters, one uppercase, one lowercase, one number, and one special character">
+                                    <button type="button" class="password-toggle reg-toggle"
+                                        aria-label="Toggle password visibility">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round" class="toggle-icon-show">
+                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                            <circle cx="12" cy="12" r="3"></circle>
+                                        </svg>
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round" class="toggle-icon-hide" style="display:none;">
+                                            <path
+                                                d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24">
+                                            </path>
+                                            <line x1="1" y1="1" x2="23" y2="23"></line>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>{{ t('confirm_password') }}</label>
+                                <div class="password-input-wrapper">
+                                    <input type="password" name="confirm_password" id="reg-confirm"
+                                        placeholder="Repeate your password" value="" autocomplete="off" required>
+                                    <button type="button" class="password-toggle reg-toggle"
+                                        aria-label="Toggle password visibility">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round" class="toggle-icon-show">
+                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                            <circle cx="12" cy="12" r="3"></circle>
+                                        </svg>
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round" class="toggle-icon-hide" style="display:none;">
+                                            <path
+                                                d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24">
+                                            </path>
+                                            <line x1="1" y1="1" x2="23" y2="23"></line>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block" style="margin-top: 24px;">{{
+                                t('create_account') }}</button>
+                        </form>
+
+                        <div class="auth-divider-thin">
+                            <span>{{ t('or_use_email') }}</span>
+                        </div>
+
+                        <div class="social-login-side-by-side">
+                            <a href="/login/google" class="social-btn-outline" style="width: 100%;">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg"
+                                    alt="Google">
+                                Sign in with Google
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Global Flash Messages -->
+    <div class="container global-alerts">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+    </div>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Support Us Section - Only visible on main public pages -->
+    {% if request.endpoint in ['index', 'article', 'category', 'category_news', 'search', 'live_article'] %}
+    <section class="support-us-section" id="supportUs">
+        <div class="support-us-container">
+            <div class="support-us-header">
+                <h2>Support JANAVAAKYA</h2>
+                <p>Help us stay independent and continue bringing you the voice of the people.</p>
+            </div>
+            <div class="qr-card">
+                <img src="{{ url_for('static', filename='images/payment_qr.png') }}" alt="UPI Payment QR Code" class="qr-image">
+                <div class="upi-details">
+                    <span class="upi-label">UPI ID</span>
+                    <span class="upi-id">payment@janavaakya</span>
+                </div>
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-brand">
+                <a href="/" class="logo">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <svg width="38" height="38" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20 20 L50 80 L80 20" fill="none" stroke="#e31837" stroke-width="12"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M40 45 Q50 35 60 45" fill="none" stroke="#e31837" stroke-width="6"
+                                stroke-linecap="round" opacity="0.6" />
+                        </svg>
+                        <div style="display: flex; flex-direction: column; justify-content: center; text-align: left;">
+                            <span
+                                style="font-family: 'Outfit', sans-serif; font-size: 24px; font-weight: 800; color: var(--text-primary); line-height: 1; letter-spacing: 0.5px;">JANAVAAKYA</span>
+                            <span
+                                style="font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 600; color: var(--text-secondary); letter-spacing: 1.5px; text-transform: uppercase;">Voice
+                                of the People</span>
+                        </div>
+                    </div>
+                </a>
+                <p>{{ t('footer_desc') }}</p>
+            </div>
+            <div class="footer-links">
+                <h4>{{ t('explore') }}</h4>
+                <ul>
+                    <li><a href="#">{{ t('about') }}</a></li>
+                    <li><a href="#">{{ t('contact') }}</a></li>
+                    <li><a href="#">{{ t('privacy') }}</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; {{ t('copyright') }}</p>
+        </div>
+    </footer>
+
+    <script>
+        // Sync Voice Assistant Settings from Server to LocalStorage
+        {% if session.get('user_data') %}
+        const serverVoiceTime = "{{ session.user_data.get('voice_time', '') }}";
+        const serverVoiceEnabled = "{{ 'true' if session.user_data.get('voice_enabled', False) else 'false' }}";
+
+        if (serverVoiceTime) {
+            localStorage.setItem('aura_voice_time', serverVoiceTime);
+        }
+        if (serverVoiceEnabled) {
+            localStorage.setItem('aura_voice_enabled', serverVoiceEnabled);
+        }
+        {% endif %}
+    </script>
+    <!-- Inject News Data for Voice Assistant -->
+    <script>
+        const newsData = {{ news_articles | default ([]) | tojson | safe }};
+        const currentLang = "{{ session.get('lang', 'en') }}";
+        const userVoiceTime = "{{ session.get('user_data', {}).get('voice_time', '') }}";
+        const userVoiceEnabled = "{{ 'true' if session.get('user_data', {}).get('voice_enabled') else 'false' }}";
+    </script>
+    <script>
+        // Sidebar / Drawer Script
+        // User Dropdown Toggle (Main Site)
+        const userMenuToggle = document.getElementById('userMenuToggle');
+        const userMenu = document.getElementById('userMenu');
+        if (userMenuToggle && userMenu) {
+            userMenuToggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                userMenu.classList.toggle('active');
+            });
+            document.addEventListener('click', (e) => {
+                if (!userMenu.contains(e.target)) {
+                    userMenu.classList.remove('active');
+                }
+            });
+        }
+
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        function updateTime() {
+            const timeEl = document.getElementById('live-time');
+            if (timeEl) {
+                const now = new Date();
+                timeEl.textContent = now.toLocaleString('en-US', {
+                    weekday: 'long',
+                    month: 'long',
+                    day: 'numeric',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+            }
+        }
+        setInterval(updateTime, 1000);
+        updateTime();
+    </script>
+
+    <div id="google_translate_element" style="display:none;"></div>
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'en',
+                includedLanguages: 'en,ml',
+                autoDisplay: false
+            }, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript"
+        src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+    <script>
+        (function () {
+            const sessionLang = (typeof currentLang !== 'undefined') ? currentLang : "{{ session.get('lang', 'en') }}";
+
+            // Direct cookie management for Google Translate
+            if (sessionLang === 'en') {
+                document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+                document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=' + window.location.hostname + ';';
+            } else {
+                // Force Google Translate to the session language
+                document.cookie = 'googtrans=/en/' + sessionLang + '; path=/;';
+                document.cookie = 'googtrans=/en/' + sessionLang + '; path=/; domain=' + window.location.hostname + ';';
+            }
+
+            let attempts = 0;
+            const maxAttempts = 50; 
+            const checker = setInterval(() => {
+                attempts++;
+                const combo = document.querySelector('.goog-te-combo');
+                if (combo) {
+                    clearInterval(checker);
+                    if (combo.value !== sessionLang) {
+                        combo.value = sessionLang;
+                        combo.dispatchEvent(new Event('change'));
+                    }
+                } else if (attempts > maxAttempts) {
+                    clearInterval(checker);
+                }
+            }, 500);
+        })();
+    </script>
+
+    <!-- Mega Menu Overlay -->
+    <div class="mega-menu-overlay" id="sidebarOverlay"></div>
+    <div class="mega-menu-container" id="categorySidebar">
+        <!-- Top Utility Bar -->
+        <div class="mega-menu-top-bar">
+            <div class="mega-menu-logo">
+                <span class="brand-text-dark">JANAVAAKYA</span>
+                <span class="brand-text-accent">VOICE OF THE PEOPLE</span>
+            </div>
+            <div class="mega-menu-actions">
+                <div class="action-item mega-dropdown-container">
+                    <div class="mega-dropdown-menu">
+                        <div class="mode-option" data-theme-value="light">
+                            <span class="mode-icon">☀️</span> Light Mode
+                        </div>
+                        <div class="mode-option" data-theme-value="dark">
+                            <span class="mode-icon">🌙</span> Dark Mode
+                        </div>
+                        <div class="mode-option" data-theme-value="read">
+                            <span class="mode-icon">👁️</span> Read Mode
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="action-item mega-dropdown-container">
+                <div class="mega-dropdown-toggle">
+                    <span class="icon-avatar">A</span> MY ACCOUNT <span class="chevron">▼</span>
+                </div>
+                <div class="mega-dropdown-menu account-dropdown">
+                    <div class="account-header">
+                        <span class="avatar-large">A</span>
+                        <div class="account-user-info">
+                            <span class="signed-in-label">SIGNED IN AS</span>
+                            <span class="user-display-name">{{ session.get('user', 'Akshaya Sabu') }}</span>
+                        </div>
+                    </div>
+                    <div class="account-divider"></div>
+                    {% if session.get('role') == 'advertiser' %}
+                    <a href="/advertiser" class="account-link" style="color: #6366f1; font-weight: 800;">DASHBOARD</a>
+                    <div class="account-divider"></div>
+                    {% endif %}
+                    <a href="/profile" class="account-link">MY PROFILE</a>
+                    <div class="account-divider"></div>
+                    <a href="/history" class="account-link">HISTORY</a>
+                    <div class="account-divider"></div>
+                    <a href="/saved" class="account-link">SAVED ITEMS</a>
+                    <div class="account-divider"></div>
+                    <a href="/change-password" class="account-link">CHANGE PASSWORD</a>
+                    <div class="account-divider"></div>
+                    <a href="/logout" class="account-link logout-link">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                        LOG OUT
+                    </a>
+                </div>
+            </div>
+            <button id="sidebarClose" class="mega-close-btn" aria-label="Close Menu">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="mega-menu-tabs">
+            <button class="mega-tab active" data-tab="sections">SECTIONS</button>
+            <button class="mega-tab" data-tab="about">ABOUT</button>
+        </div>
+
+        <!-- Mega Menu Body -->
+        <div class="mega-menu-body">
+            <div class="mega-sections-content active-tab-content" id="tab-sections">
+                <div class="sections-column-grid">
+                    <!-- Column 1 -->
+                    <div class="section-column">
+                        <a href="/category/News" class="section-link">NEWS <span class="link-chevron">›</span></a>
+                        <a href="/category/Movies" class="section-link">MOVIES <span class="link-chevron">›</span></a>
+                        <a href="/category/Music" class="section-link">MUSIC <span class="link-chevron">›</span></a>
+                        <a href="/category/Travel" class="section-link">TRAVEL <span class="link-chevron">›</span></a>
+                        <a href="/category/Astro" class="section-link">ASTRO <span class="link-chevron">›</span></a>
+                        <a href="/category/Career" class="section-link">CAREER <span class="link-chevron">›</span></a>
+                        <a href="/category/Videos" class="section-link">VIDEOS</a>
+                        <a href="/category/Podcast" class="section-link">PODCAST</a>
+                        <a href="/category/Games" class="section-link">GAMES <span class="badge-new">NEW</span></a>
+                        <a href="/category/Events" class="section-link">EVENTS</a>
+                        <a href="/missing-persons" class="section-link" style="color: #ef4444; font-weight: 800;">MISSING PERSONS <span class="badge-new">NEW</span></a>
+                    </div>
+                    <!-- Column 2 -->
+                    <div class="section-column">
+
+                        <a href="/category/Kerala" class="section-link">KERALA <span class="link-chevron">›</span></a>
+                        <a href="/category/Life" class="section-link">LIFE <span class="link-chevron">›</span></a>
+                        <a href="/category/Food" class="section-link">FOOD <span class="link-chevron">›</span></a>
+                        <a href="/category/Tech" class="section-link">TECH <span class="link-chevron">›</span></a>
+                        <a href="/category/MKid" class="section-link">MKID <span class="link-chevron">›</span></a>
+                        <a href="/category/FactCheck" class="section-link">FACT CHECK <span
+                                class="link-chevron">›</span></a>
+                        <a href="/category/WebStories" class="section-link">WEB STORIES</a>
+                        <a href="/category/Graphics" class="section-link">GRAPHICS</a>
+                        <a href="/category/SmartPicks" class="section-link">SMART PICKS <span
+                                class="link-chevron">›</span></a>
+                    </div>
+                    <!-- Column 3 -->
+                    <div class="section-column">
+                        <a href="/category/Global" class="section-link">GLOBAL <span class="link-chevron">›</span></a>
+                        <a href="/category/sports" class="section-link">SPORTS <span class="link-chevron">›</span></a>
+                        <a href="/category/Auto" class="section-link">AUTO <span class="link-chevron">›</span></a>
+                        <a href="/category/Health" class="section-link">HEALTH <span class="link-chevron">›</span></a>
+                        <a href="/category/Agri" class="section-link">AGRI <span class="link-chevron">›</span></a>
+                        <a href="/category/Business" class="section-link">BUSINESS & MONEY <span
+                                class="link-chevron">›</span></a>
+                        <a href="/category/Shortz" class="section-link">SHORTZ</a>
+                        <a href="/category/Photogallery" class="section-link">PHOTOGALLERY</a>
+                        <a href="/category/Doodles" class="section-link">DOODLES</a>
+                        <a href="/category/Topics" class="section-link">TOPICS</a>
+                    </div>
+                </div>
+
+                <!-- Right Utility Sidebar -->
+                <div class="mega-utility-sidebar">
+                    <div class="utility-btns">
+                        <a href="#" class="utility-btn"><span class="icon">📖</span> E-EDITION</a>
+
+                        <a href="/category/Videos" class="utility-btn"><span class="icon">📺</span> VIDEOS</a>
+                        <a href="/category/Podcast" class="utility-btn"><span class="icon">🎙️</span>
+                            PODCASTS</a>
+                    </div>
+                    <div class="e-paper-widget">
+                        <h4 class="widget-title">TODAY'S E-PAPER</h4>
+                        <div class="paper-preview">
+                            <img src="{{ url_for('static', filename='images/epaper_thumb.jpg') }}" alt="E-PAPER"
+                                onerror="this.src='https://placehold.co/180x250?text=E-PAPER'">
+                        </div>
+                        <button class="btn-read-now">READ NOW</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mega-sections-content" id="tab-about" style="display: none; padding: 2rem;">
+                <h3>About JANAVAAKYA</h3>
+                <p>Premium Editorial and News Portal dedicated to the voice of the people.</p>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    
+    <!-- GSAP Animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="{{ url_for('static', filename='js/animation.js') }}"></script>
+</body>
+
+</html>

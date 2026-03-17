@@ -1,0 +1,449 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+<div class="dashboard-wrapper editorial-layout">
+
+
+    <main class="dashboard-content">
+        <div class="submission-container animate-in">
+            <div class="submission-header">
+                <a href="/" class="back-link">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                    Back to Dashboard
+                </a>
+                <h1 class="page-title">Submit Local News</h1>
+                <p class="subtitle">Share important incidents or events happening in your locality.</p>
+            </div>
+
+            <div class="form-card">
+                <form action="/submit-local-news" method="POST" enctype="multipart/form-data" class="submission-form">
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label for="title">News Title</label>
+                            <input type="text" id="title" name="title"
+                                placeholder="What happened? Give a clear headline" required minlength="10">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="category">Category</label>
+                            <select id="category" name="category" required>
+                                <option value="" disabled selected>Select Category</option>
+                                <option value="Accident">Accident</option>
+                                <option value="Event">Event</option>
+                                <option value="Politics">Politics</option>
+                                <option value="Community">Community</option>
+                                <option value="Crime">Crime</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="location">Location (Town/City)</label>
+                            <input type="text" id="location" name="location" placeholder="e.g. Kozhikode, Kerala"
+                                required>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label>Select Precise Location on Map</label>
+                            <div id="map-selection-container">
+                                <div id="map"
+                                    style="height: 350px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 12px; z-index: 1;">
+                                </div>
+                                <div class="map-controls" style="display: flex; gap: 12px; align-items: center;">
+                                    <button type="button" id="get-my-location" class="btn btn-outline"
+                                        style="padding: 8px 16px; font-size: 0.9rem;">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round" style="margin-right: 4px;">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <circle cx="12" cy="12" r="3"></circle>
+                                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                                        </svg>
+                                        Use My Current Location
+                                    </button>
+                                    <span id="coord-display"
+                                        style="font-size: 0.85rem; color: var(--text-secondary);">Click on map to select
+                                        location</span>
+                                </div>
+                                <input type="hidden" id="latitude" name="latitude">
+                                <input type="hidden" id="longitude" name="longitude">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="incident_date">Date & Time of Incident</label>
+                            <input type="datetime-local" id="incident_date" name="incident_date" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="media">Upload Image/Video (Optional)</label>
+                            <div class="file-upload-wrapper">
+                                <input type="file" id="media" name="media" accept="image/*,video/*" class="file-input">
+                                <div class="file-dummy">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                        <polyline points="17 8 12 3 7 8"></polyline>
+                                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                                    </svg>
+                                    <span class="file-text">Choose a file or drag it here</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label for="content">Full Description</label>
+                            <textarea id="content" name="content" rows="8"
+                                placeholder="Provide as much detail as possible. What happened, who was involved, any consequences?"
+                                required minlength="50"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-footer">
+                        <div class="guidelines">
+                            <h4>Submission Policy</h4>
+                            <ul>
+                                <li>Ensure the information is accurate and non-fictional.</li>
+                                <li>Photos/Videos help verify your submission faster.</li>
+                                <li>Fake news or spam will lead to account restrictions.</li>
+                            </ul>
+                        </div>
+                        <button type="submit" class="btn btn-primary submit-btn">
+                            Submit for Review
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="22" y1="2" x2="11" y2="13"></line>
+                                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                            </svg>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+</div>
+
+<style>
+    .submission-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 40px 20px;
+    }
+
+    .submission-header {
+        margin-bottom: 32px;
+    }
+
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text-secondary);
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-bottom: 20px;
+        transition: color 0.2s;
+    }
+
+    .back-link:hover {
+        color: var(--primary);
+    }
+
+    .page-title {
+        font-size: 2.5rem;
+        font-weight: 850;
+        color: var(--text-main);
+        margin-bottom: 8px;
+        letter-spacing: -1px;
+    }
+
+    .subtitle {
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+    }
+
+    .form-card {
+        background: white;
+        border-radius: 24px;
+        padding: 40px;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 24px;
+        margin-bottom: 32px;
+    }
+
+    .full-width {
+        grid-column: span 2;
+    }
+
+    .form-group label {
+        display: block;
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: var(--text-main);
+        margin-bottom: 10px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        padding: 12px 16px;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        background: #f8fafc;
+        font-family: inherit;
+        font-size: 1rem;
+        transition: all 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: var(--primary);
+        background: white;
+        box-shadow: 0 0 0 4px rgba(0, 153, 255, 0.1);
+    }
+
+    .file-upload-wrapper {
+        position: relative;
+        height: 48px;
+    }
+
+    .file-input {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+        z-index: 2;
+    }
+
+    .file-dummy {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: 2px dashed #e2e8f0;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+
+    .file-input:hover+.file-dummy {
+        border-color: var(--primary);
+        color: var(--primary);
+        background: rgba(0, 153, 255, 0.05);
+    }
+
+    .form-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        padding-top: 32px;
+        border-top: 1px solid #f1f5f9;
+    }
+
+    .guidelines {
+        max-width: 400px;
+    }
+
+    .guidelines h4 {
+        font-size: 0.85rem;
+        font-weight: 800;
+        color: #ef4444;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 12px;
+    }
+
+    .guidelines ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .guidelines li {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        margin-bottom: 6px;
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .guidelines li::before {
+        content: '•';
+        color: #ef4444;
+        font-weight: bold;
+    }
+
+    .submit-btn {
+        height: 54px;
+        padding: 0 32px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        border-radius: 14px;
+        background: var(--primary);
+        color: white;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s;
+        box-shadow: 0 10px 20px rgba(0, 153, 255, 0.2);
+    }
+
+    .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 15px 30px rgba(0, 153, 255, 0.3);
+        background: #007acc;
+    }
+
+    @media (max-width: 768px) {
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .full-width {
+            grid-column: span 1;
+        }
+
+        .form-footer {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 32px;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Default center: Kerala (roughly)
+        var defaultLat = 10.8505;
+        var defaultLng = 76.2711;
+
+        var map = L.map('map').setView([defaultLat, defaultLng], 7);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        var marker;
+
+        function updateLocationInputs(lat, lng) {
+            document.getElementById('latitude').value = lat;
+            document.getElementById('longitude').value = lng;
+            document.getElementById('coord-display').textContent = 'Selected: ' + lat.toFixed(5) + ', ' + lng.toFixed(5);
+
+            // Reverse Geocoding using Nominatim (OpenStreetMap)
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.display_name) {
+                        // Try to get a cleaner address (city, town, or suburb)
+                        var addr = data.address;
+                        var locationStr = addr.city || addr.town || addr.village || addr.suburb || addr.neighbourhood || data.display_name.split(',')[0];
+
+                        if (addr.state) locationStr += ', ' + addr.state;
+
+                        document.getElementById('location').value = locationStr;
+                    }
+                })
+                .catch(err => console.error('Geocoding error:', err));
+        }
+
+        map.on('click', function (e) {
+            var lat = e.latlng.lat;
+            var lng = e.latlng.lng;
+
+            if (marker) {
+                marker.setLatLng(e.latlng);
+            } else {
+                marker = L.marker(e.latlng, { draggable: true }).addTo(map);
+                marker.on('dragend', function (event) {
+                    var m = event.target;
+                    var position = m.getLatLng();
+                    updateLocationInputs(position.lat, position.lng);
+                });
+            }
+
+            updateLocationInputs(lat, lng);
+        });
+
+        document.getElementById('get-my-location').addEventListener('click', function () {
+            if (navigator.geolocation) {
+                var btn = this;
+                var originalHtml = btn.innerHTML;
+                btn.innerHTML = 'Locating...';
+                btn.disabled = true;
+
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        var lat = position.coords.latitude;
+                        var lng = position.coords.longitude;
+                        var latlng = [lat, lng];
+
+                        map.setView(latlng, 15);
+
+                        if (marker) {
+                            marker.setLatLng(latlng);
+                        } else {
+                            marker = L.marker(latlng, { draggable: true }).addTo(map);
+                        }
+
+                        updateLocationInputs(lat, lng);
+
+                        btn.innerHTML = originalHtml;
+                        btn.disabled = false;
+                    },
+                    (error) => {
+                        console.error('Geolocation error:', error);
+                        alert('Could not get your location. Please select it on the map.');
+                        btn.innerHTML = originalHtml;
+                        btn.disabled = false;
+                    }
+                );
+            } else {
+                alert('Geolocation is not supported by your browser.');
+            }
+        });
+
+        // Initialize map size properly
+        setTimeout(function () {
+            map.invalidateSize();
+        }, 100);
+    });
+</script>
+{% endblock %}

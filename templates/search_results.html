@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="dashboard-wrapper editorial-layout">
+
+
+    <!-- Main Results Feed -->
+    <main class="editorial-feed">
+        <div class="section-header" style="margin-bottom: 2rem;">
+            <h2 class="editorial-label page-title" style="text-transform: none;">
+                Search Results for: <span style="color: var(--primary);">"{{ query }}"</span>
+            </h2>
+            <p style="color: var(--text-secondary); margin-top: 0.5rem;">Found {{ results|length }} related article(s)
+            </p>
+        </div>
+
+        {% if results %}
+        <div class="editorial-grid news-grid">
+            {% for article in results %}
+            <article class="grid-card news-card animate-in">
+                <div class="card-img-wrap">
+                    <img src="{{ article.image }}" alt="{{ article.title }}">
+                    {% if article.is_submission %}
+                    <span class="card-tag" style="background: var(--secondary);">Community</span>
+                    {% else %}
+                    <span class="card-tag">{{ article.category }}</span>
+                    {% endif %}
+                </div>
+                <div class="card-info" style="display: flex; flex-direction: column; flex-grow: 1;">
+                    <h3>
+                        {% if article.is_submission %}
+                        <a href="{{ url_for('view_submission', news_id=article.id) }}">{{ article.title }}</a>
+                        {% else %}
+                        <a href="{{ url_for('article', article_id=article.id) }}">{{ article.title }}</a>
+                        {% endif %}
+                    </h3>
+                    {% if article.excerpt %}
+                    <p
+                        style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.5rem; display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; flex-grow: 1;">
+                        {{ article.excerpt }}
+                    </p>
+                    {% endif %}
+                    <div class="meta" style="margin-top: 1rem;">
+                        <span>{{ article.publish_date if article.publish_date else 'Recent' }}</span>
+                    </div>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state"
+            style="text-align: center; padding: 4rem 2rem; background: var(--surface); border-radius: 12px; border: 1px solid var(--border);">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)"
+                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                style="margin-bottom: 1rem; opacity: 0.5;">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <h3 style="margin-bottom: 0.5rem;">No results found</h3>
+            <p style="color: var(--text-secondary);">We couldn't find any articles matching "{{ query }}".</p>
+            <a href="{{ url_for('index') }}" class="btn-primary"
+                style="margin-top: 1.5rem; display: inline-block;">Return to Home</a>
+        </div>
+        {% endif %}
+    </main>
+</div>
+{% endblock %}

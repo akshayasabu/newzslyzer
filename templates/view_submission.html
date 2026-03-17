@@ -1,0 +1,198 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% if news.latitude and news.longitude %}
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+{% endif %}
+<div class="dashboard-wrapper">
+    <main class="dashboard-content">
+        <div class="review-container animate-in">
+            <div class="review-header" style="margin-bottom: 40px;">
+                <a href="{{ url_for('index') }}" class="back-link">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                    Back to Dashboard
+                </a>
+                <h1 class="page-title">{{ news.title }}</h1>
+                <div class="status-badge status-{{ news.status }}" style="margin-left: auto;">
+                    {{ news.status | upper }}
+                </div>
+            </div>
+
+            <div class="content-card"
+                style="max-width: 900px; margin: 0 auto; background: white; border-radius: 32px; padding: 48px; box-shadow: 0 20px 50px rgba(0,0,0,0.05); border: 1px solid #f1f5f9;">
+                <div class="meta-row"
+                    style="display: flex; gap: 24px; margin-bottom: 32px; font-weight: 700; color: var(--text-secondary); font-size: 0.9rem;">
+                    <span
+                        style="color: var(--primary); background: rgba(0,153,255,0.08); padding: 6px 16px; border-radius: 12px;">{{
+                        news.category }}</span>
+                    <span>📍 {{ news.location }}</span>
+                    <span>🕒 Event Date: {{ news.incident_date }}</span>
+                </div>
+
+                {% if news.media_url %}
+                <div class="media-container"
+                    style="margin-bottom: 40px; border-radius: 24px; overflow: hidden; border: 1px solid #eef2f6;">
+                    <img src="{{ news.media_url }}" alt="Submission Image"
+                        style="width: 100%; height: auto; display: block;">
+                </div>
+                {% endif %}
+
+                <div class="article-text"
+                    style="font-size: 1.2rem; line-height: 1.8; color: #334155; margin-bottom: 40px; white-space: pre-wrap;">
+                    {{ news.content }}
+                </div>
+
+                {% if news.latitude and news.longitude %}
+                <div class="location-map-container" style="margin-bottom: 40px;">
+                    <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--text-main); margin-bottom: 16px;">
+                        Incident Location</h3>
+                    <div id="view-map"
+                        style="height: 300px; border-radius: 20px; border: 1px solid #eef2f6; z-index: 1;"></div>
+                </div>
+                {% endif %}
+
+                <div class="submission-footer"
+                    style="padding-top: 32px; border-top: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; color: var(--text-secondary); font-size: 0.95rem;">
+                    <div>
+                        Submitted on <strong>{{ news.created_at.strftime('%B %d, %Y') }}</strong>
+                    </div>
+                    {% if news.status == 'rejected' and news.review_note %}
+                    <div class="rejection-note"
+                        style="background: #fff1f2; color: #e11d48; padding: 12px 20px; border-radius: 12px; font-weight: 600;">
+                        <strong>Note:</strong> {{ news.review_note }}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="google_translate_element"></div>
+
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'en',
+                includedLanguages: 'en,ml',
+                autoDisplay: false
+            }, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript"
+        src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+    <script>
+        (function () {
+            const sessionLang = "{{ session.get('lang', 'en') }}";
+            if (sessionLang === 'en') return;
+
+            const maxAttempts = 60;
+            let attempts = 0;
+
+            const pollInterval = setInterval(() => {
+                const combo = document.querySelector('.goog-te-combo');
+                attempts++;
+
+                if (combo) {
+                    clearInterval(pollInterval);
+                    combo.value = sessionLang;
+                    combo.dispatchEvent(new Event('change'));
+                } else if (attempts >= maxAttempts) {
+                    clearInterval(pollInterval);
+                    console.error("Google Translate failed to load for User Submission view.");
+                }
+            }, 500);
+        })();
+    </script>
+</div>
+
+<style>
+    .review-container {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 40px 20px;
+    }
+
+    .review-header {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+    }
+
+    .page-title {
+        font-size: 2.2rem;
+        font-weight: 850;
+        color: var(--text-main);
+        letter-spacing: -1px;
+        margin: 0;
+    }
+
+    .status-badge {
+        padding: 8px 20px;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 800;
+    }
+
+    .status-pending {
+        background: #fef9c3;
+        color: #854d0e;
+    }
+
+    .status-approved {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .status-rejected {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text-secondary);
+        text-decoration: none;
+        font-weight: 700;
+        transition: color 0.2s;
+    }
+
+    .back-link:hover {
+        color: var(--primary);
+    }
+</style>
+
+{% if news.latitude and news.longitude %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var lat = {{ news.latitude }
+    };
+    var lng = {{ news.longitude }};
+    var map = L.map('view-map').setView([lat, lng], 15);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    L.marker([lat, lng]).addTo(map)
+        .bindPopup('{{ news.location }}')
+        .openPopup();
+
+    setTimeout(function () {
+        map.invalidateSize();
+    }, 100);
+    });
+</script>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,365 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="mp-report-ivory-viewport">
+    <div class="container mp-report-canvas animate-ivory-reveal">
+        <div class="ivory-flex-row">
+            <!-- Information Panel -->
+            <aside class="ivory-info-sidebar">
+                <div class="ivory-sidebar-inner">
+                    <div class="ivory-marker-pill">PRIORITY CASE SUBMISSION</div>
+                    <h1 class="ivory-side-title">Submit Verification Details</h1>
+                    <p class="ivory-side-p">Our network activates the moment you hit publish. Every verified report is amplified to community heads and local news desks for immediate awareness.</p>
+                    
+                    <div class="ivory-benefit-list">
+                        <div class="ivory-benefit">
+                            <div class="ivory-benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4l3 3"></path></svg></div>
+                            <div class="ivory-benefit-copy"><strong>Immediate Sync</strong> - Automated dissemination across entire digital ecosystem.</div>
+                        </div>
+                        <div class="ivory-benefit">
+                            <div class="ivory-benefit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg></div>
+                            <div class="ivory-benefit-copy"><strong>Face Analysis</strong> - Integrated validation ensures only genuine records enter the vault.</div>
+                        </div>
+                    </div>
+                    
+                    <footer class="ivory-sidebar-footer">
+                        <a href="{{ url_for('missing_persons') }}" class="ivory-back-link">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                            BACK TO DIRECTORY
+                        </a>
+                    </footer>
+                </div>
+            </aside>
+            
+            <!-- Main Reporting Form -->
+            <main class="ivory-form-panel">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                  {% if messages %}
+                    {% for category, message in messages %}
+                      <div class="ivory-notification-pop {{ 'danger' if category == 'error' else 'success' }} animate-slide-right">
+                          <div class="ivory-notif-blob">
+                              {% if category == 'error' %}
+                              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                              {% else %}
+                              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                              {% endif %}
+                          </div>
+                          <span>{{ message }}</span>
+                      </div>
+                    {% endfor %}
+                  {% endif %}
+                {% endwith %}
+
+                <form action="{{ url_for('add_missing_person') }}" method="POST" enctype="multipart/form-data" class="ivory-rich-form" id="mainReportForm">
+                    <div class="form-scrollable">
+                        <header class="section-divider">
+                            <span>01 / IDENTIFICATION PROFILE</span>
+                            <div class="line"></div>
+                        </header>
+                        
+                        <div class="ivory-input-block">
+                            <label>Legal Identity Name</label>
+                            <div class="ivory-input-container">
+                                <input type="text" name="name" placeholder="Full name (e.g., John Doe)" required autocomplete="off" 
+                                       pattern="^[A-Za-z]{2,}(\s+[A-Za-z]{2,})+$" title="Please enter a valid full name (at least two words required, e.g., John Doe)">
+                                <div class="focus-bar"></div>
+                            </div>
+                        </div>
+
+                        <div class="ivory-dual-layout">
+                            <div class="ivory-input-block small">
+                                <label>Approximate Age</label>
+                                <div class="ivory-input-container">
+                                    <input type="number" name="age" placeholder="Age" required min="0" max="120">
+                                    <div class="focus-bar"></div>
+                                </div>
+                            </div>
+                            <div class="ivory-input-block small">
+                                <label>Gender Spectrum</label>
+                                <div class="ivory-input-container">
+                                    <select name="gender" required>
+                                        <option value="" disabled selected>Select Gender</option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                    <div class="focus-bar"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="ivory-input-block">
+                            <label>Distinctive Physical Features</label>
+                            <div class="ivory-input-container">
+                                <textarea name="description" placeholder="Physical description, tattoos, scars, clothing last seen (Min 30 characters)..." required minlength="30" maxlength="1000" rows="3" style="width: 100%; padding: 1rem 0; background: transparent; border: none; border-bottom: 2px solid var(--ivory-border); font-size: 1.1rem; font-family: 'Crimson Pro', serif; resize: none;"></textarea>
+                                <div class="focus-bar"></div>
+                            </div>
+                        </div>
+
+                        <div class="ivory-dual-layout">
+                            <div class="ivory-input-block small">
+                                <label>Location Last Seen</label>
+                                <div class="ivory-input-container">
+                                    <input type="text" name="last_seen_location" placeholder="City or Area" required minlength="3" maxlength="100">
+                                    <div class="focus-bar"></div>
+                                </div>
+                            </div>
+                            <div class="ivory-input-block small">
+                                <label>Date Last Seen</label>
+                                <div class="ivory-input-container">
+                                    <input type="date" name="last_seen_date" id="lastSeenDateStandalone" required>
+                                    <div class="focus-bar"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <header class="section-divider">
+                            <span>02 / CONTACT INFORMATION</span>
+                            <div class="line"></div>
+                        </header>
+
+                        <div class="ivory-dual-layout">
+                            <div class="ivory-input-block small">
+                                <label>Contact Name</label>
+                                <div class="ivory-input-container">
+                                    <input type="text" name="contact_name" placeholder="Full name" required 
+                                           pattern="^[A-Za-z]{2,}(\s+[A-Za-z]{2,})+$" title="Please enter a valid full name (at least two words required)">
+                                    <div class="focus-bar"></div>
+                                </div>
+                            </div>
+                            <div class="ivory-input-block small">
+                                <label>Contact Phone</label>
+                                <div class="ivory-input-container">
+                                    <input type="tel" name="contact_phone" placeholder="Contact number" required 
+                                           pattern="^\+?[0-9\s\-]{7,15}$" title="Valid phone number format (7-15 digits)">
+                                    <div class="focus-bar"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="ivory-dual-layout">
+                            <div class="ivory-input-block small">
+                                <label>Reporter Email</label>
+                                <div class="ivory-input-container">
+                                    <input type="email" name="reporter_email" placeholder="Your email address" required>
+                                    <div class="focus-bar"></div>
+                                </div>
+                            </div>
+                            <div class="ivory-input-block small">
+                                <label>Relationship to Missing Person</label>
+                                <div class="ivory-input-container">
+                                    <input type="text" name="relationship" placeholder="e.g., Parent, Friend, Sibling" required minlength="2">
+                                    <div class="focus-bar"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <header class="section-divider">
+                            <span>03 / CRITICAL VISUAL DATA</span>
+                            <div class="line"></div>
+                        </header>
+
+                        <div class="ivory-upload-theatre" id="theatreZone">
+                            <input type="file" name="photo" accept="image/*" id="faceUpload" required>
+                            <label for="faceUpload" class="theatre-mask">
+                                <div class="theatre-icon-wrap">
+                                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+                                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                                        <circle cx="12" cy="13" r="4"></circle>
+                                    </svg>
+                                </div>
+                                <div class="theatre-title">Engagement Visual Required</div>
+                                <div class="theatre-sub">Upload a high-fidelity portrait for system face verification. (Max 5MB)</div>
+                            </label>
+                            <div id="visualPreview" class="visual-preview-overlay"></div>
+                        </div>
+
+                        <div class="ivory-footer-action">
+                            <button type="submit" class="ivory-submit-btn">
+                                <span>PUBLISH TO NETWORK</span>
+                                <div class="btn-glow"></div>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </main>
+        </div>
+    </div>
+</div>
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&display=swap');
+
+    :root {
+        --ivory-pearl: #fcfbf7;
+        --deep-crimson: #8b0000;
+        --slate-black: #0f172a;
+        --soft-slate: #64748b;
+        --ivory-border: #f0ede4;
+    }
+
+    .mp-report-ivory-viewport {
+        background: #f1eddf;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 5rem 1rem;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .mp-report-canvas {
+        background: var(--ivory-pearl);
+        width: 100%;
+        max-width: 1200px;
+        border-radius: 60px;
+        overflow: hidden;
+        box-shadow: 0 80px 140px -40px rgba(0, 0, 0, 0.2);
+    }
+
+    .ivory-flex-row { display: flex; align-items: stretch; min-height: 850px; }
+
+    /* Info Sidebar */
+    .ivory-info-sidebar {
+        flex: 0 0 450px;
+        background: var(--slate-black);
+        padding: 6rem 5rem;
+        color: #fff;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        position: relative;
+    }
+    .ivory-sidebar-inner { z-index: 10; position: relative; }
+    
+    .ivory-marker-pill { 
+        display: inline-block; padding: 0.6rem 1.25rem; background: rgba(139, 0, 0, 0.15); 
+        color: #ff4d4d; border: 1px solid rgba(139, 0, 0, 0.3); border-radius: 12px;
+        font-family: 'Outfit', sans-serif; font-size: 0.7rem; font-weight: 900; letter-spacing: 2.5px;
+        margin-bottom: 2.5rem;
+    }
+
+    .ivory-side-title {
+        font-family: 'Outfit', sans-serif; font-size: 4rem; font-weight: 950;
+        letter-spacing: -3px; line-height: 0.9; margin-bottom: 2rem;
+    }
+
+    .ivory-side-p {
+        font-family: 'Crimson Pro', serif; font-size: 1.3rem; font-weight: 400; font-style: italic;
+        color: #94a3b8; line-height: 1.6; margin-bottom: 5rem;
+    }
+
+    .ivory-benefit-list { display: flex; flex-direction: column; gap: 3rem; }
+    .ivory-benefit { display: flex; gap: 1.5rem; align-items: flex-start; }
+    .ivory-benefit-icon { 
+        flex-shrink: 0; width: 50px; height: 50px; background: rgba(255,255,255,0.05); 
+        border-radius: 16px; display: flex; align-items: center; justify-content: center;
+        color: var(--deep-crimson);
+    }
+    .ivory-benefit-copy { font-size: 0.95rem; color: #cbd5e1; line-height: 1.5; }
+    .ivory-benefit-copy strong { color: #fff; display: block; font-family: 'Outfit', sans-serif; margin-bottom: 0.25rem; letter-spacing: 1px; }
+
+    .ivory-sidebar-footer { margin-top: auto; padding-top: 6rem; }
+    .ivory-back-link {
+        color: #fff; text-decoration: none; font-family: 'Outfit', sans-serif; font-weight: 900;
+        font-size: 0.75rem; letter-spacing: 2px; display: flex; align-items: center; gap: 1rem;
+        transition: 0.3s;
+    }
+    .ivory-back-link:hover { color: var(--deep-crimson); transform: translateX(-10px); }
+
+    /* Form Panel */
+    .ivory-form-panel { flex: 1; padding: 7rem 8rem; background: #fff; }
+
+    .ivory-notification-pop {
+        padding: 1.5rem 2.5rem; border-radius: 25px; display: flex; align-items: center; gap: 1.5rem;
+        margin-bottom: 4rem; font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 0.95rem;
+    }
+    .ivory-notification-pop.success { background: #f0fdf4; color: #166534; border: 1.5px solid #bbf7d0; }
+    .ivory-notification-pop.danger { background: #fef2f2; color: #991b1b; border: 1.5px solid #fecaca; }
+    .ivory-notif-blob { width: 36px; height: 36px; background: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+
+    .section-divider {
+        display: flex; align-items: center; gap: 2rem; margin-bottom: 3.5rem;
+    }
+    .section-divider span { font-family: 'Outfit', sans-serif; font-size: 0.7rem; font-weight: 900; letter-spacing: 3px; color: var(--soft-slate); }
+    .section-divider .line { flex: 1; height: 2px; background: var(--ivory-border); }
+
+    .ivory-input-block { margin-bottom: 3rem; }
+    .ivory-input-block label { display: block; font-family: 'Outfit', sans-serif; font-size: 0.8rem; font-weight: 900; color: var(--slate-black); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1rem; }
+    .ivory-input-container { position: relative; }
+    .ivory-input-container input, .ivory-input-container select {
+        width: 100%; padding: 1.4rem 0; background: transparent; border: none; border-bottom: 2px solid var(--ivory-border);
+        font-size: 1.25rem; font-weight: 600; font-family: 'Crimson Pro', serif; color: var(--slate-black);
+        transition: 0.4s;
+    }
+    .focus-bar { position: absolute; bottom: 0; left: 0; width: 0; height: 2px; background: var(--deep-crimson); transition: 0.6s cubic-bezier(0.19, 1, 0.22, 1); }
+    .ivory-input-container input:focus ~ .focus-bar { width: 100%; }
+    .ivory-input-container input:focus { outline: none; }
+
+    .ivory-dual-layout { display: flex; gap: 4rem; }
+    .ivory-dual-layout .small { flex: 1; }
+
+    .ivory-upload-theatre {
+        position: relative; height: 320px; border-radius: 40px; background: var(--ivory-pearl);
+        border: 2px dashed var(--ivory-border); display: flex; align-items: center; justify-content: center;
+        overflow: hidden; cursor: pointer; transition: 0.5s;
+    }
+    .ivory-upload-theatre:hover { border-color: var(--deep-crimson); background: #fdfaf5; }
+    .ivory-upload-theatre input { position: absolute; inset: 0; opacity: 0; cursor: pointer; z-index: 10; }
+    
+    .theatre-mask { text-align: center; pointer-events: none; transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+    .ivory-upload-theatre:hover .theatre-mask { transform: scale(1.05); }
+    .theatre-icon-wrap { color: var(--soft-slate); margin-bottom: 2rem; }
+    .ivory-upload-theatre:hover .theatre-icon-wrap { color: var(--deep-crimson); }
+    .theatre-title { font-family: 'Outfit', sans-serif; font-size: 1.2rem; font-weight: 900; color: var(--slate-black); margin-bottom: 0.75rem; }
+    .theatre-sub { font-size: 0.9rem; color: var(--soft-slate); font-weight: 500; padding: 0 4rem; }
+
+    .ivory-footer-action { margin-top: 5rem; }
+    .ivory-submit-btn {
+        width: 100%; height: 80px; background: var(--slate-black); color: #fff; border: none;
+        border-radius: 24px; font-family: 'Outfit', sans-serif; font-weight: 900; letter-spacing: 3px;
+        position: relative; overflow: hidden; cursor: pointer; transition: 0.4s;
+    }
+    .ivory-submit-btn:hover { background: #000; transform: translateY(-5px); box-shadow: 0 30px 60px -20px rgba(0,0,0,0.5); }
+    .ivory-submit-btn span { position: relative; z-index: 2; }
+    .btn-glow { position: absolute; top:0; left:-100%; width:100%; height:100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent); transition: 0.8s; }
+    .ivory-submit-btn:hover .btn-glow { left: 100%; }
+
+    /* Animations */
+    .animate-ivory-reveal { animation: ivoryReveal 1.2s cubic-bezier(0.16, 1, 0.3, 1); }
+    .animate-slide-right { animation: luxSlideR 0.8s cubic-bezier(0.19, 1, 0.22, 1); }
+    @keyframes ivoryReveal { from { opacity: 0; transform: translateY(40px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    @keyframes luxSlideR { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
+
+    /* Responsive */
+    @media (max-width: 1100px) {
+        .ivory-flex-row { flex-direction: column; }
+        .ivory-info-sidebar { flex: none; padding: 4rem 3rem; }
+        .ivory-form-panel { padding: 4rem 3rem; }
+        .ivory-dual-layout { gap: 2rem; }
+        .ivory-side-title { font-size: 3rem; }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const uInput = document.getElementById('faceUpload');
+        const theatre = document.getElementById('theatreZone');
+        
+        uInput.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const name = this.files[0].name;
+                document.querySelector('.theatre-title').innerText = "Visual Captured";
+                document.querySelector('.theatre-sub').innerText = name + " is staged for processing.";
+                theatre.style.borderColor = "var(--deep-crimson)";
+            }
+        });
+
+        // Set max date for lastSeenDateStandalone
+        const dInput = document.getElementById('lastSeenDateStandalone');
+        if (dInput) {
+            dInput.max = new Date().toISOString().split('T')[0];
+        }
+    });
+</script>
+{% endblock %}

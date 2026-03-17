@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container"
+    style="max-width: 600px; margin: 5rem auto; text-align: center; background: white; padding: 3rem; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
+    <h1 style="font-family: 'Outfit', sans-serif; font-size: 2.5rem; color: var(--text-main); margin-bottom: 1rem;">
+        Unlock Premium Content</h1>
+    <p style="font-size: 1.1rem; color: var(--text-secondary); margin-bottom: 2rem; line-height: 1.6;">
+        You've discovered a premium article. Subscribe today to unlock exclusive deep dives, expert analysis, long-form
+        features, detailed fact-checks, and breaking news early access.
+    </p>
+
+    <div
+        style="background: var(--bg-light); padding: 2rem; border-radius: 12px; margin-bottom: 2rem; text-align: left;">
+        <h3 style="margin-bottom: 1rem; color: var(--text-main);">Premium Benefits:</h3>
+        <ul style="list-style: none; padding: 0; margin: 0; color: var(--text-secondary);">
+            <li style="margin-bottom: 0.5rem;">✔️ Investigative reports</li>
+            <li style="margin-bottom: 0.5rem;">✔️ Expert analysis and opinion articles</li>
+            <li style="margin-bottom: 0.5rem;">✔️ Long-form feature stories</li>
+            <li style="margin-bottom: 0.5rem;">✔️ AI-based detailed fact-check reports</li>
+            <li style="margin-bottom: 0.5rem;">✔️ Early access to important breaking news</li>
+        </ul>
+    </div>
+
+    <form method="POST" action="/premium-subscribe" style="text-align: left;">
+        <div style="margin-bottom: 2rem;">
+            <h3 style="margin-bottom: 1rem; color: var(--text-main);">Payment Details</h3>
+
+            <div style="margin-bottom: 1rem;">
+                <label
+                    style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary); font-size: 0.9rem;">Name
+                    on Card</label>
+                <input type="text" placeholder="John Doe" required
+                    style="width: 100%; padding: 0.8rem; border: 1px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 1rem;">
+            </div>
+
+            <div style="margin-bottom: 1rem;">
+                <label
+                    style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary); font-size: 0.9rem;">Card
+                    Number</label>
+                <input type="text" placeholder="XXXX XXXX XXXX XXXX" required pattern="\d{16}"
+                    title="16 digit card number"
+                    style="width: 100%; padding: 0.8rem; border: 1px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 1rem;">
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                <div>
+                    <label
+                        style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary); font-size: 0.9rem;">Expiry
+                        Date</label>
+                    <input type="text" placeholder="MM/YY" required pattern="\d\d/\d\d" title="MM/YY format"
+                        style="width: 100%; padding: 0.8rem; border: 1px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 1rem;">
+                </div>
+                <div>
+                    <label
+                        style="display: block; margin-bottom: 0.5rem; color: var(--text-secondary); font-size: 0.9rem;">CVV</label>
+                    <input type="password" placeholder="•••" required pattern="\d{3,4}" title="3 or 4 digit CVV"
+                        style="width: 100%; padding: 0.8rem; border: 1px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 1rem;">
+                </div>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary" style="font-size: 1.1rem; padding: 1rem 2.5rem; width: 100%;">
+            Subscribe Now
+        </button>
+    </form>
+
+    <div style="margin-top: 1.5rem;">
+        <a href="/" style="color: var(--text-secondary); text-decoration: none; font-size: 0.9rem;">No thanks, return to
+            free news</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,16 @@
+Flask
+requests
+beautifulsoup4
+googletrans
+deep-translator
+flask-sqlalchemy
+authlib
+python-dotenv
+opencv-python-headless
+Werkzeug
+SQLAlchemy
+MarkupSafe
+Jinja2
+itsdangerous
+click
+gunicorn

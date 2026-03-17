@@ -1,0 +1,97 @@
+<nav class="category-nav" id="navBar">
+        <div class="container">
+                <ul class="nav-links">
+                        <li>
+                                <a href="/" class="nav-link nav-home {% if request.path == '/' %}active{% endif %}"
+                                        aria-label="Home">
+                                        <svg viewBox="0 0 24 24" fill="currentColor">
+                                                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
+                                        </svg>
+                                </a>
+                        </li>
+                        <li><a href="/live-news"
+                                        class="nav-link {% if request.path == '/live-news' %}active{% endif %}">LIVE
+                                        NEWS</a>
+                        </li>
+                        <li><a href="/live-stream"
+                                        class="nav-link {% if request.path == '/live-stream' %}active{% endif %}"
+                                        style="display: flex; align-items: center; gap: 4px;">
+                                        <span style="color: #dc2626; font-size: 1.2em;">&bull;</span> LIVE STREAM
+                                </a>
+                        </li>
+
+                        <li><a href="/category/Global"
+                                        class="nav-link {% if category_name|lower == 'global' %}active{% endif %}">GLOBAL</a>
+                        </li>
+                        <li><a href="/category/Movies"
+                                        class="nav-link {% if category_name|lower == 'movies' %}active{% endif %}">MOVIES</a>
+                        </li>
+                        <li><a href="/category/Kerala"
+                                        class="nav-link dropdown-trigger {% if category_name|lower == 'kerala' %}active{% endif %}">Kerala
+                                        News</a>
+                        </li>
+                        <li><a href="/category/sports"
+                                        class="nav-link {% if category_name|lower == 'sports' %}active{% endif %}">SPORTS</a>
+                        </li>
+                        <li><a href="/category/Music"
+                                        class="nav-link {% if category_name|lower == 'music' %}active{% endif %}">MUSIC</a>
+                        </li>
+                        <li><a href="/category/Life"
+                                        class="nav-link {% if category_name|lower == 'life' %}active{% endif %}">LIFE</a>
+                        </li>
+                        <li><a href="/category/Auto"
+                                        class="nav-link {% if category_name|lower == 'auto' %}active{% endif %}">AUTO</a>
+                        </li>
+                        <li><a href="/category/Travel"
+                                        class="nav-link {% if category_name|lower == 'travel' %}active{% endif %}">TRAVEL</a>
+                        </li>
+                        <li><a href="/category/Food"
+                                        class="nav-link {% if category_name|lower == 'food' %}active{% endif %}">FOOD</a>
+                        </li>
+                        <li><a href="/category/Health"
+                                        class="nav-link {% if category_name|lower == 'health' %}active{% endif %}">HEALTH</a>
+                        </li>
+                        {% if request.path != '/missing-persons' %}
+                        <li><a href="/category/Astro"
+                                        class="nav-link {% if category_name|lower == 'astro' %}active{% endif %}">ASTRO</a>
+                        </li>
+                        <li><a href="/category/Tech"
+                                        class="nav-link {% if category_name|lower == 'tech' %}active{% endif %}">TECH</a>
+                        </li>
+                        {% endif %}
+                        <li><a href="/category/Agri"
+                                        class="nav-link {% if category_name|lower == 'agri' %}active{% endif %}">AGRI</a>
+                        </li>
+                        <li><a href="/category/Career"
+                                        class="nav-link {% if category_name|lower == 'career' %}active{% endif %}">CAREER</a>
+                        </li>
+                        <li><a href="/category/MKid"
+                                        class="nav-link {% if category_name|lower == 'mkid' %}active{% endif %}">MKID</a>
+                        </li>
+                        <li><a href="/category/Business"
+                                        class="nav-link {% if category_name|lower == 'business' %}active{% endif %}">BUSINESS
+                                        &
+                                        MONEY</a></li>
+                        <li><a href="/category/Videos"
+                                        class="nav-link {% if category_name|lower == 'videos' %}active{% endif %}">VIDEOS</a>
+                        </li>
+                        <li><a href="/missing-persons"
+                                        class="nav-link {% if request.path == '/missing-persons' %}active{% endif %}"
+                                        style="font-weight: 800; color: #ef4444;">MISSING PERSONS</a>
+                        </li>
+                        <li><a href="/advertise"
+                                        class="nav-link {% if request.path == '/advertise' %}active{% endif %}">ADVERTISE
+                                        WITH US</a>
+                        </li>
+                        <li>
+                                <a href="#" class="nav-link nav-more" aria-label="More">
+                                        <svg viewBox="0 0 24 24" fill="currentColor">
+                                                <circle cx="5" cy="12" r="2"></circle>
+                                                <circle cx="12" cy="12" r="2"></circle>
+                                                <circle cx="19" cy="12" r="2"></circle>
+                                        </svg>
+                                </a>
+                        </li>
+                </ul>
+        </div>
+</nav>

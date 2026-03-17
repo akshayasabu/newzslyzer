@@ -1,0 +1,106 @@
+{% extends "reporter_layout.html" %}
+
+{% block content %}
+<div class="container" style="padding: 4rem 1.5rem; max-width: 1200px;">
+    <!-- Header -->
+    <div class="dashboard-header"
+        style="margin-bottom: 3rem; display: flex; justify-content: space-between; align-items: start;">
+        <div>
+            <h1
+                style="font-family: 'Outfit', sans-serif; font-size: 2.5rem; margin-bottom: 1rem; background: linear-gradient(135deg, #06B6D4, #3B82F6); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+                Reporter Dashboard</h1>
+            <p style="color: #64748b; font-size: 1.1rem;">Create and manage your news articles.</p>
+        </div>
+        <div style="display: flex; gap: 1rem;">
+            <a href="{{ url_for('submit_news') }}" class="btn btn-primary"
+                style="display: flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.25rem; background: #06b6d4; border: none; box-shadow: 0 4px 6px -1px rgba(6, 182, 212, 0.4);">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+                Submit News
+            </a>
+        </div>
+    </div>
+
+
+    <!-- My Contributions Section -->
+    <div class="dashboard-section" style="margin-bottom: 4rem;">
+        <h2
+            style="font-size: 1.5rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem; color: #0f172a;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+            My Contributions
+        </h2>
+
+        {% if articles %}
+        <div class="article-list"
+            style="background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead style="background: #f8fafc;">
+                    <tr>
+                        <th style="padding: 1rem 1.5rem; text-align: left; font-weight: 600; color: #475569;">Article
+                        </th>
+                        <th style="padding: 1rem 1.5rem; text-align: left; font-weight: 600; color: #475569;">Category
+                        </th>
+                        <th style="padding: 1rem 1.5rem; text-align: left; font-weight: 600; color: #475569;">Status
+                        </th>
+                        <th style="padding: 1rem 1.5rem; text-align: right; font-weight: 600; color: #475569;">Actions
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for article in articles %}
+                    <tr style="border-bottom: 1px solid #f1f5f9;">
+                        <td style="padding: 1rem 1.5rem;">
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <img src="{{ article.image }}" alt=""
+                                    style="width: 48px; height: 32px; border-radius: 4px; object-fit: cover;">
+                                <span style="font-weight: 500; color: #1e293b;">{{ article.title }}</span>
+                            </div>
+                        </td>
+                        <td style="padding: 1rem 1.5rem;">
+                            <span style="font-size: 0.9rem; color: #64748b;">{{ article.category }}</span>
+                        </td>
+                        <td style="padding: 1rem 1.5rem;">
+                            <span
+                                style="padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.85rem; font-weight: 500; background: #dcfce7; color: #15803d;">
+                                Published
+                            </span>
+                        </td>
+                        <td style="padding: 1rem 1.5rem; text-align: right;">
+                            <a href="{{ url_for('article', article_id=article.id) }}" class="btn btn-sm btn-outline"
+                                style="color: #6366f1; border: 1px solid #e0e7ff; padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.9rem; text-decoration: none;">
+                                View
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div
+            style="text-align: center; padding: 4rem 2rem; background: white; border-radius: 16px; border: 1px dashed #cbd5e1;">
+            <div
+                style="width: 64px; height: 64px; background: #f1f5f9; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                </svg>
+            </div>
+            <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.25rem; margin-bottom: 0.5rem; color: #1e293b;">No
+                articles yet</h3>
+            <p style="color: #64748b; margin-bottom: 1.5rem;">You haven't submitted any news articles yet.</p>
+            <a href="{{ url_for('submit_news') }}" class="btn btn-primary"
+                style="background: #06b6d4; border: none;">Start Writing</a>
+        </div>
+        {% endif %}
+    </div>
+    {% endblock %}
