@@ -1,0 +1,12 @@
+.env
+node_modules
+__pycache__
+playwright-report
+test-results
+instance/
+static/uploads/*
+!static/uploads/.gitkeep
+*.pyc
+.pytest_cache
+test-results/
+playwright-report/
