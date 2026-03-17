@@ -3,7 +3,6 @@ requests==2.32.4
 beautifulsoup4==4.13.3
 deep-translator
 googletrans==4.0.0-rc1
-gunicorn==23.0.0
 flask-sqlalchemy==3.1.1
 authlib==1.5.1
 python-dotenv==1.2.1
@@ -14,3 +13,4 @@ MarkupSafe==3.0.2
 Jinja2==3.1.5
 itsdangerous==2.2.0
 click==8.1.8
+gunicorn==23.0.0
