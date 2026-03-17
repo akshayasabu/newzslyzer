@@ -1,0 +1,1106 @@
+{% extends layout|default('base.html') %}
+{% block nav_left %}{% endblock %}
+
+{% block horizontal_nav %}{% endblock %}
+
+{% block nav_right %}
+<div class="janavaakya-dropdown-container" style="position: relative;">
+    <div class="janavaakya-dropdown-toggle" style="display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 4px; background: white; border-radius: 50%; border: 1px solid #e2e8f0; width: 40px; height: 40px; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: all 0.2s;">
+        <div class="user-avatar-circle" style="width: 28px; height: 28px; background: #1e1b4b; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem;">
+            {{ session.get('user', 'U')[0] | upper }}
+        </div>
+    </div>
+    <!-- Dropdown Menu -->
+    <div class="m-dropdown-menu" style="position: absolute; top: calc(100% + 10px); right: 0; width: 160px; background: white; border-radius: 12px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); border: 1px solid #e2e8f0; display: none; z-index: 1100; overflow: hidden;">
+        {% if session.get('role') == 'admin' %}
+        <a href="/admin" class="m-dropdown-item" style="display: flex; align-items: center; gap: 8px; padding: 12px 20px; font-size: 0.85rem; font-weight: 700; color: #475569; text-decoration: none; transition: all 0.2s;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line></svg>
+            ADMIN
+        </a>
+        <div style="height: 1px; background: #e2e8f0;"></div>
+        {% endif %}
+        <a href="/logout" class="m-dropdown-item m-logout" style="display: flex; align-items: center; gap: 8px; padding: 12px 20px; font-size: 0.85rem; font-weight: 700; color: #ef4444; text-decoration: none; transition: all 0.2s;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+            LOG OUT
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<!-- Use a wrapper that hides the main site header/nav on this page for a perfect match -->
+
+    <div class="profile-janavaakya-wrapper">
+        <div class="janavaakya-breadcrumb">
+            <a href="/">HOME</a> / <span class="active-crumb">MY ACCOUNT</span>
+        </div>
+
+        <div class="profile-janavaakya-layout">
+            <!-- Sidebar -->
+            <aside class="janavaakya-profile-sidebar">
+                <div class="sidebar-menu-box">
+                    <a href="#" class="sidebar-item active">
+                        <span class="icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4f46e5"
+                                stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                                <circle cx="12" cy="7" r="4" />
+                            </svg>
+                        </span>
+                        My Profiles
+                    </a>
+                    <a href="#ads-section" class="sidebar-item">
+                        <span class="icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="stroke-current" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="9" y1="3" x2="9" y2="21"></line>
+                            </svg>
+                        </span>
+                        My Advertisements
+                    </a>
+                </div>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="janavaakya-profile-main">
+                <div class="janavaakya-edit-profile-card">
+                    <h1 class="card-title">Edit Profile</h1>
+                    <p class="mandatory-hint"><span class="required">*</span> indicates mandatory field</p>
+
+                    <form action="/update_profile" method="POST" id="janavaakyaProfileForm">
+                        <div class="m-form-grid">
+                            <!-- Row 1 -->
+                            <div class="m-form-group">
+                                <label>First Name: <span class="required">*</span></label>
+                                <input type="text" name="first_name" value="{{ user_data.first_name or '' }}"
+                                    placeholder="Akshaya Sabu" required>
+                            </div>
+                            <div class="m-form-group">
+                                <label>Last Name: <span class="required">*</span></label>
+                                <input type="text" name="last_name" value="{{ user_data.last_name or '' }}"
+                                    placeholder="Last Name" required>
+                            </div>
+
+                            <!-- Row 2 -->
+                            <div class="m-form-group">
+                                <label>Email: <span class="required">*</span></label>
+                                <input type="email" name="email" value="{{ user_data.email }}" readonly
+                                    class="readonly-field">
+                            </div>
+                            <div class="m-form-group">
+                                <label>Phone Number</label>
+                                <input type="text" name="phone" value="{{ user_data.phone or '' }}"
+                                    placeholder="Phone Number">
+                            </div>
+
+                            <!-- Row 3 -->
+                            <div class="m-form-group">
+                                <label>Dob</label>
+                                <div class="m-dob-row">
+                                    <select name="dob_day">
+                                        <option value="">DD</option>
+                                        {% for i in range(1, 32) %}
+                                        <option value="{{ i }}" {% if user_data.dob_day==i|string %}selected{% endif %}>
+                                            {{ i }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <select name="dob_month">
+                                        <option value="">MM</option>
+                                        {% for i in range(1, 13) %}
+                                        <option value="{{ i }}" {% if user_data.dob_month==i|string %}selected{% endif
+                                            %}>{{ i }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <select name="dob_year">
+                                        <option value="">YYYY</option>
+                                        {% for i in range(2026, 1920, -1) %}
+                                        <option value="{{ i }}" {% if user_data.dob_year==i|string %}selected{% endif
+                                            %}>{{ i }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="m-form-group">
+                                <label style="margin-bottom: 12px;">Gender:</label>
+                                <div class="m-radio-group">
+                                    <label class="m-radio">
+                                        <input type="radio" name="gender" value="Male" {% if user_data.gender=='Male'
+                                            %}checked{% endif %}>
+                                        <span>Male</span>
+                                    </label>
+                                    <label class="m-radio">
+                                        <input type="radio" name="gender" value="Female" {% if
+                                            user_data.gender=='Female' %}checked{% endif %}>
+                                        <span>Female</span>
+                                    </label>
+                                    <label class="m-radio">
+                                        <input type="radio" name="gender" value="Transgender" {% if
+                                            user_data.gender=='Transgender' %}checked{% endif %}>
+                                        <span>Transgender</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Row 4 -->
+                            <div class="m-form-group">
+                                <label>House/ Flat No</label>
+                                <input type="text" name="house_no" value="{{ user_data.house_no or '' }}"
+                                    placeholder="House Flat No">
+                            </div>
+                            <div class="m-form-group">
+                                <label>Apartment/ Road/ Area</label>
+                                <input type="text" name="apartment_road_area"
+                                    value="{{ user_data.apartment_road_area or '' }}" placeholder="Apartment Road Area">
+                            </div>
+
+                            <!-- Row 5 -->
+                            <div class="m-form-group">
+                                <label>Country</label>
+                                <select name="country">
+                                    <option value="">Select Country</option>
+                                    <option value="India" {% if user_data.country=='India' %}selected{% endif %}>India
+                                    </option>
+                                    <option value="USA" {% if user_data.country=='USA' %}selected{% endif %}>USA
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="m-form-group">
+                                <label>State/ Province</label>
+                                <select name="state_province">
+                                    <option value="">Select State</option>
+                                    <option value="Kerala" {% if user_data.state_province=='Kerala' %}selected{% endif
+                                        %}>Kerala</option>
+                                </select>
+                            </div>
+
+                            <!-- Row 6 -->
+                            <div class="m-form-group">
+                                <label>City</label>
+                                <select name="city">
+                                    <option value="">Select City</option>
+                                    <option value="Kochi" {% if user_data.city=='Kochi' %}selected{% endif %}>Kochi
+                                    </option>
+                                    <option value="Thrissur" {% if user_data.city=='Thrissur' %}selected{% endif %}>
+                                        Thrissur</option>
+                                </select>
+                            </div>
+                            <div class="m-form-group">
+                                <label>SubscriberID</label>
+                                <input type="text"
+                                    value="{{ user_data.subscriber_id or 'd2c638d2-2c1d-59f7-a22b-2f2d41cf0b7514934' }}"
+                                    readonly class="readonly-field subscriber-code">
+                            </div>
+                        </div>
+
+                        <!-- Update Button -->
+                        <div class="m-submit-row">
+                            <button type="submit" class="m-update-btn">Update Profile</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- NEW: News Interests Section -->
+                <div class="janavaakya-edit-profile-card" style="margin-top: 2rem;">
+                    <h1 class="card-title">📰 News Interests</h1>
+                    <p class="mandatory-hint" style="color: #64748b;">Select your preferred news categories to get
+                        personalized recommendations</p>
+
+                    <form action="/update_interests" method="POST" id="interestsForm">
+                        <div class="interests-grid">
+                            {% set all_categories = ['Sports', 'Tech', 'Politics', 'Business', 'Entertainment',
+                            'Health', 'Science', 'Travel', 'Food', 'Auto', 'Music', 'Life', 'Global', 'Movies',
+                            'Kerala', 'Astro', 'Career', 'Agri'] %}
+                            {% set user_interests = user_data.manual_interests.split(',') if user_data.manual_interests
+                            else [] %}
+
+                            {% for category in all_categories %}
+                            <label class="interest-checkbox-card">
+                                <input type="checkbox" name="interests" value="{{ category }}" {% if category in
+                                    user_interests %}checked{% endif %}>
+                                <div class="checkbox-card-content">
+                                    <span class="checkbox-icon">
+                                        {% if category == 'Sports' %}⚽
+                                        {% elif category == 'Tech' %}💻
+                                        {% elif category == 'Politics' %}🏛️
+                                        {% elif category == 'Business' %}💼
+                                        {% elif category == 'Entertainment' %}🎬
+                                        {% elif category == 'Health' %}🏥
+                                        {% elif category == 'Science' %}🔬
+                                        {% elif category == 'Travel' %}✈️
+                                        {% elif category == 'Food' %}🍽️
+                                        {% elif category == 'Auto' %}🚗
+                                        {% elif category == 'Music' %}🎵
+                                        {% elif category == 'Life' %}🌟
+                                        {% elif category == 'Global' %}🌍
+                                        {% elif category == 'Movies' %}🎥
+                                        {% elif category == 'Kerala' %}🌴
+                                        {% elif category == 'Astro' %}⭐
+                                        {% elif category == 'Career' %}💼
+                                        {% elif category == 'Agri' %}🌾
+                                        {% endif %}
+                                    </span>
+                                    <span class="checkbox-label">{{ category }}</span>
+                                    <span class="checkmark">✓</span>
+                                </div>
+                            </label>
+                            {% endfor %}
+                        </div>
+
+                        <div class="interests-info"
+                            style="margin-top: 1.5rem; padding: 1rem; background: #f0f9ff; border-left: 4px solid #0ea5e9; border-radius: 6px;">
+                            <p style="margin: 0; font-size: 0.9rem; color: #0c4a6e; font-weight: 600;">
+                                💡 <strong>Tip:</strong> Your recommendations will combine both your manual selections
+                                and your reading behavior for the best personalized experience.
+                            </p>
+                        </div>
+
+                        <div class="m-submit-row">
+                            <button type="submit" class="m-update-btn">Save Interests</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Advertisements Section -->
+                <div id="ads-section" class="janavaakya-edit-profile-card" style="margin-top: 2rem;">
+                    <h1 class="card-title">My Advertisements</h1>
+                    <p class="mandatory-hint" style="color: #64748b;">Manage your submitted advertisements</p>
+
+                    {% if ads_submitted %}
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        {% for ad in ads_submitted %}
+                        <div style="padding: 1rem; border: 1px solid #e2e8f0; border-radius: 8px; background: white; display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <h3 style="margin: 0 0 4px; font-size: 1.1rem; color: #0f172a;">{{ ad.title }}</h3>
+                                <div style="font-size: 0.85rem; color: #64748b; margin-bottom: 8px;">Company: {{ ad.company_name }} | Duration: {{ ad.duration }} Days</div>
+                                <span style="padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; 
+                                    {% if ad.status == 'approved' %}background: #dcfce7; color: #166534;
+                                    {% elif ad.status == 'rejected' %}background: #fee2e2; color: #991b1b;
+                                    {% else %}background: #fef9c3; color: #854d0e;{% endif %}">
+                                    {{ ad.status | title }}
+                                </span>
+                            </div>
+                            <a href="{{ url_for('view_advertisement', ad_id=ad.id) }}" class="m-update-btn view-analytics-trigger" data-ad-id="{{ ad.id }}" style="padding: 8px 16px; font-size: 0.9rem; text-decoration: none;">View & Chat</a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div style="padding: 2rem; text-align: center; background: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1;">
+                        <p style="color: #64748b; margin-bottom: 1rem;">You haven't submitted any advertisements yet.</p>
+                        <a href="{{ url_for('advertise') }}" class="m-update-btn" style="text-decoration: none; display: inline-block;">Create Advertisement</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Analytics Modal HTML -->
+    <div id="analyticsModal" class="analytics-modal">
+        <div class="analytics-modal-overlay" onclick="closeAnalyticsModal()"></div>
+        <div class="analytics-modal-container" id="analyticsModalContainer">
+            <div id="analyticsModalContent">
+                <!-- Content will be injected by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+
+<style>
+    /* HIDE ONLY MENU AND FOOTER ON THIS PAGE, KEEP GLOBAL BRANDING HEADER */
+    nav.category-nav,
+    .quick-links-bar,
+    footer.footer {
+        display: none !important;
+    }
+
+    body {
+        margin: 0;
+        padding: 0 !important;
+        background: #f1f5f9;
+        font-family: 'Inter', sans-serif;
+    }
+
+    /* SUB HEADER */
+    .janavaakya-sub-header {
+        background: white;
+        padding: 10px 0;
+        border-bottom: 2px solid #e2e8f0;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+    }
+
+    .m-container {
+        max-width: 1250px;
+        margin: 0 auto;
+        padding: 0 40px;
+    }
+
+    .m-header-inner {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .m-logo img {
+        height: 32px;
+    }
+
+    .m-account-trigger {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        padding: 4px 12px;
+        background: #f8fafc;
+        border-radius: 50px;
+        border: 1px solid #e2e8f0;
+    }
+
+    .user-avatar-circle {
+        width: 28px;
+        height: 28px;
+        background: #1e1b4b;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.8rem;
+    }
+
+    .m-username {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: #1e293b;
+    }
+
+    /* DROPDOWN MENU */
+    .janavaakya-dropdown-container {
+        position: relative;
+    }
+
+    .janavaakya-dropdown-toggle {
+        cursor: pointer;
+        padding: 4px 12px;
+        background: #f8fafc;
+        border-radius: 50px;
+        border: 1px solid #e2e8f0;
+        transition: all 0.2s;
+    }
+
+    .janavaakya-dropdown-toggle:hover {
+        background: #f1f5f9;
+        border-color: #cbd5e1;
+    }
+
+    .m-dropdown-menu {
+        position: absolute;
+        top: calc(100% + 10px);
+        right: 0;
+        width: 250px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e2e8f0;
+        display: none;
+        z-index: 1100;
+        overflow: hidden;
+    }
+
+    .janavaakya-dropdown-container.active .m-dropdown-menu {
+        display: block;
+        animation: dropSlideIn 0.2s ease-out;
+    }
+
+    @keyframes dropSlideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .m-dropdown-header {
+        padding: 18px 20px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: #f8fafc;
+    }
+
+    .user-meta {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .signed-in-as {
+        font-size: 0.65rem;
+        font-weight: 700;
+        color: #94a3b8;
+        letter-spacing: 0.5px;
+    }
+
+    .user-name-display {
+        font-size: 0.95rem;
+        font-weight: 800;
+        color: #1e293b;
+    }
+
+    .m-dropdown-divider {
+        height: 1px;
+        background: #f1f5f9;
+    }
+
+    .m-dropdown-item {
+        display: block;
+        padding: 12px 20px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #475569;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+
+    .m-dropdown-item:hover {
+        background: #f8fafc;
+        color: #4f46e5;
+        padding-left: 24px;
+    }
+
+    .m-logout {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .m-logout:hover {
+        color: #ef4444 !important;
+    }
+
+    /* LAYOUT & BREADCRUMB */
+    .profile-janavaakya-wrapper {
+        padding: 2.5rem 0;
+    }
+
+    .janavaakya-breadcrumb {
+        max-width: 1250px;
+        margin: 0 auto 1.5rem;
+        padding: 0 40px;
+        font-size: 0.8rem;
+        font-weight: 800;
+        color: #94a3b8;
+        letter-spacing: 0.5px;
+    }
+
+    .active-crumb {
+        color: #64748b;
+    }
+
+    .profile-janavaakya-layout {
+        max-width: 1250px;
+        margin: 0 auto;
+        padding: 0 40px;
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        gap: 2.5rem;
+    }
+
+    /* SIDEBAR */
+    .janavaakya-profile-sidebar {
+        background: white;
+        border-radius: 12px;
+        height: fit-content;
+        overflow: hidden;
+        border: 1px solid #e2e8f0;
+    }
+
+    .sidebar-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 18px 24px;
+        color: #475569;
+        font-weight: 700;
+        text-decoration: none;
+        transition: all 0.2s;
+        font-size: 0.95rem;
+        border-bottom: 2px solid #f8fafc;
+    }
+
+    .sidebar-item.active {
+        background: #f0f3ff;
+        color: #4f46e5;
+        border-left: 6px solid #4f46e5;
+    }
+
+    .sidebar-item:hover:not(.active) {
+        background: #f8fafc;
+    }
+
+    /* MAIN CARD */
+    .janavaakya-edit-profile-card {
+        background: white;
+        border-radius: 12px;
+        padding: 2.5rem 3.5rem;
+        border: 1px solid #e2e8f0;
+    }
+
+    .card-title {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: #0f172a;
+        margin: 0 0 8px;
+    }
+
+    .mandatory-hint {
+        font-size: 0.85rem;
+        color: #ef4444;
+        font-weight: 600;
+        margin-bottom: 2.5rem;
+    }
+
+    /* FORM GRID */
+    .m-form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem 4rem;
+    }
+
+    .m-form-group label {
+        display: block;
+        font-size: 0.95rem;
+        font-weight: 800;
+        color: #1e293b;
+        margin-bottom: 12px;
+    }
+
+    .m-form-group input,
+    .m-form-group select {
+        width: 100%;
+        padding: 14px 18px;
+        border: 1.5px solid #cbd5e1;
+        border-radius: 6px;
+        font-size: 1rem;
+        color: #334155;
+        background: white;
+        outline: none;
+        transition: all 0.2s;
+    }
+
+    .m-form-group input:focus,
+    .m-form-group select:focus {
+        border-color: #4f46e5;
+    }
+
+    .readonly-field {
+        background: #f8fafc;
+        border-color: #e2e8f0 !important;
+        color: #94a3b8 !important;
+        cursor: not-allowed;
+    }
+
+    .subscriber-code {
+        font-family: monospace;
+        font-size: 0.85rem !important;
+    }
+
+    .m-dob-row {
+        display: flex;
+        gap: 15px;
+    }
+
+    .m-radio-group {
+        display: flex;
+        gap: 2.5rem;
+        align-items: center;
+        padding-top: 5px;
+    }
+
+    .m-radio {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+    }
+
+    .m-radio input[type="radio"] {
+        width: 18px;
+        height: 18px;
+        accent-color: #4f46e5;
+    }
+
+    .m-radio span {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #475569;
+    }
+
+    .m-submit-row {
+        margin-top: 3.5rem;
+        display: flex;
+        justify-content: center;
+    }
+
+    .m-update-btn {
+        background: #4f46e5;
+        color: white;
+        border: none;
+        padding: 14px 50px;
+        border-radius: 8px;
+        font-weight: 800;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .m-update-btn:hover {
+        background: #4338ca;
+        transform: translateY(-2px);
+    }
+
+    /* NEWS INTERESTS SECTION */
+    .interests-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .interest-checkbox-card {
+        position: relative;
+        cursor: pointer;
+        display: block;
+    }
+
+    .interest-checkbox-card input[type="checkbox"] {
+        position: absolute;
+        opacity: 0;
+        cursor: pointer;
+    }
+
+    .checkbox-card-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 1.5rem 1rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        background: white;
+        transition: all 0.3s ease;
+        position: relative;
+        min-height: 120px;
+    }
+
+    .checkbox-icon {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+        transition: transform 0.3s ease;
+    }
+
+    .checkbox-label {
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: #475569;
+        text-align: center;
+    }
+
+    .checkmark {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 24px;
+        height: 24px;
+        background: #10b981;
+        color: white;
+        border-radius: 50%;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.75rem;
+        font-weight: 800;
+    }
+
+    .interest-checkbox-card input[type="checkbox"]:checked~.checkbox-card-content {
+        border-color: #4f46e5;
+        background: #f0f3ff;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+    }
+
+    .interest-checkbox-card input[type="checkbox"]:checked~.checkbox-card-content .checkmark {
+        display: flex;
+    }
+
+    .interest-checkbox-card input[type="checkbox"]:checked~.checkbox-card-content .checkbox-icon {
+        transform: scale(1.1);
+    }
+
+    .interest-checkbox-card input[type="checkbox"]:checked~.checkbox-card-content .checkbox-label {
+        color: #4f46e5;
+        font-weight: 800;
+    }
+
+    .interest-checkbox-card:hover .checkbox-card-content {
+        border-color: #cbd5e1;
+        transform: translateY(-2px);
+    }
+
+    @media (max-width: 768px) {
+        .interests-grid {
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        }
+
+        .checkbox-card-content {
+            padding: 1rem 0.75rem;
+            min-height: 100px;
+        }
+
+        .checkbox-icon {
+            font-size: 2rem;
+        }
+    }
+
+    /* Refined Modal Styling */
+    .analytics-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 2000;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+    }
+
+    .analytics-modal-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(15, 23, 42, 0.4);
+        backdrop-filter: blur(12px);
+        transition: all 0.3s ease;
+    }
+
+    .analytics-modal-container {
+        position: relative;
+        width: 100%;
+        max-width: 600px;
+        background: #ffffff;
+        border-radius: 32px;
+        box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.3);
+        overflow: hidden;
+        z-index: 2001;
+        opacity: 0;
+        transform: scale(0.9) translateY(40px);
+        border: 1px solid rgba(100, 116, 139, 0.1);
+    }
+
+    .analytics-header {
+        padding: 2.5rem 2.5rem 1.5rem;
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        border-bottom: 1px solid #e2e8f0;
+        position: relative;
+    }
+
+    .analytics-modal-close {
+        position: absolute;
+        top: 1.5rem;
+        right: 1.5rem;
+        width: 36px;
+        height: 36px;
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: #64748b;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+    }
+
+    .analytics-modal-close:hover {
+        background: #f43f5e;
+        color: white;
+        border-color: #f43f5e;
+        transform: rotate(90deg) scale(1.1);
+    }
+
+    .analytics-body {
+        padding: 2.5rem;
+    }
+
+    .metrics-grid-refined {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+        margin-top: 1.5rem;
+    }
+
+    .metric-item-refined {
+        background: #f8fafc;
+        padding: 1.5rem;
+        border-radius: 20px;
+        border: 1px solid #f1f5f9;
+        transition: all 0.3s ease;
+    }
+
+    .metric-item-refined:hover {
+        background: #ffffff;
+        border-color: #6366f1;
+        transform: translateY(-4px);
+        box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.1);
+    }
+
+    .metric-label-refined {
+        font-size: 0.75rem;
+        font-weight: 800;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    .metric-value-refined {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: #0f172a;
+        font-family: 'Outfit', sans-serif;
+    }
+
+    .analytics-loading {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 5rem;
+        color: #64748b;
+    }
+
+    .spinner {
+        width: 48px;
+        height: 48px;
+        border: 4px solid #f1f5f9;
+        border-top: 4px solid #6366f1;
+        border-radius: 50%;
+        animation: spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        margin-bottom: 1.5rem;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px solid #f1f5f9;
+        border-top: 4px solid #6366f1;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 1rem;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+</style>
+<script>
+    // Visual Polish: Mark crumb active
+    const links = document.querySelectorAll('.sidebar-item');
+    links.forEach(link => {
+        link.addEventListener('click', () => {
+            links.forEach(l => l.classList.remove('active'));
+            link.classList.add('active');
+        });
+    });
+
+    // Toggle Dropdown
+    const dropdownContainer = document.querySelector('.janavaakya-dropdown-container');
+    const dropdownToggle = document.querySelector('.janavaakya-dropdown-toggle');
+
+    if (dropdownToggle && dropdownContainer) {
+        dropdownToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdownContainer.classList.toggle('active');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!dropdownContainer.contains(e.target)) {
+                dropdownContainer.classList.remove('active');
+            }
+        });
+    }
+
+    // --- Analytics Modal Logic ---
+    const analyticsModal = document.getElementById('analyticsModal');
+    const modalContainer = document.getElementById('analyticsModalContainer');
+    const modalContent = document.getElementById('analyticsModalContent');
+    const triggers = document.querySelectorAll('.view-analytics-trigger');
+
+    window.openAnalyticsModal = function() {
+        analyticsModal.style.display = 'flex';
+        document.body.style.overflow = 'hidden'; 
+        
+        if (window.gsap) {
+            gsap.to(analyticsModal.querySelector('.analytics-modal-overlay'), { opacity: 1, duration: 0.3 });
+            gsap.to(modalContainer, {
+                opacity: 1,
+                scale: 1,
+                y: 0,
+                duration: 0.5,
+                ease: 'back.out(1.7)'
+            });
+        }
+    };
+
+    window.closeAnalyticsModal = function() {
+        if (window.gsap) {
+            gsap.to(modalContainer, {
+                opacity: 0,
+                scale: 0.9,
+                y: 40,
+                duration: 0.3,
+                ease: 'power2.in',
+                onComplete: () => {
+                    analyticsModal.style.display = 'none';
+                    document.body.style.overflow = '';
+                    modalContent.innerHTML = '';
+                }
+            });
+            gsap.to(analyticsModal.querySelector('.analytics-modal-overlay'), { opacity: 0, duration: 0.3 });
+        } else {
+            analyticsModal.style.display = 'none';
+            document.body.style.overflow = '';
+            modalContent.innerHTML = '';
+        }
+    };
+
+    triggers.forEach(trigger => {
+        trigger.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const adId = trigger.getAttribute('data-ad-id');
+            const apiUrl = `/api/advertisement/analytics/${adId}`;
+            
+            openAnalyticsModal();
+            
+            // Show improved loading state
+            modalContent.innerHTML = `
+                <div class="analytics-loading">
+                    <div class="spinner"></div>
+                    <p style="font-weight: 700; font-family: 'Outfit', sans-serif; color: #0f172a; font-size: 1.1rem;">Fetching Real-time Insights</p>
+                    <p style="font-size: 0.9rem; margin-top: 0.5rem;">One moment while we process campaign data...</p>
+                </div>
+            `;
+
+            try {
+                const response = await fetch(apiUrl);
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    modalContent.innerHTML = `
+                        <div class="analytics-header">
+                            <button class="analytics-modal-close" onclick="closeAnalyticsModal()" title="Close">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                            </button>
+                            <div style="display: inline-block; background: #e0e7ff; color: #4338ca; padding: 0.4rem 0.8rem; border-radius: 100px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1rem;">
+                                Campaign Performance
+                            </div>
+                            <h2 style="font-family: 'Outfit', sans-serif; font-size: 2rem; color: #0f172a; margin: 0; font-weight: 800; line-height: 1.2;">${data.title}</h2>
+                            <div style="display: flex; gap: 1.5rem; margin-top: 1rem; color: #64748b; font-size: 0.85rem; font-weight: 600;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                                    Started: ${data.created_at}
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                    Ends: ${data.end_date}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="analytics-body">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                                <div>
+                                    <span style="font-size: 0.85rem; color: #64748b; font-weight: 600;">Active Plan:</span>
+                                    <span style="margin-left: 0.5rem; background: #f1f5f9; padding: 0.35rem 0.75rem; border-radius: 8px; color: #0f172a; font-weight: 800; font-size: 0.9rem;">${data.plan}</span>
+                                </div>
+                                <span style="padding: 0.5rem 1rem; border-radius: 100px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; 
+                                    ${data.status === 'approved' ? 'background: #dcfce7; color: #15803d;' : 'background: #fef3c7; color: #b45309;'}">
+                                    ${data.status}
+                                </span>
+                            </div>
+                            <div class="metrics-grid-refined">
+                                <div class="metric-item-refined">
+                                    <span class="metric-label-refined">Total Views</span>
+                                    <div class="metric-value-refined">${data.views.toLocaleString()}</div>
+                                </div>
+                                <div class="metric-item-refined">
+                                    <span class="metric-label-refined">Total Clicks</span>
+                                    <div class="metric-value-refined">${data.clicks.toLocaleString()}</div>
+                                </div>
+                                <div class="metric-item-refined" style="grid-column: span 2; display: flex; align-items: center; justify-content: space-between; background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);">
+                                    <div>
+                                        <span class="metric-label-refined" style="color: rgba(255,255,255,0.8);">Click Through Rate</span>
+                                        <div class="metric-value-refined" style="color: white; font-size: 2.25rem;">${data.ctr}%</div>
+                                    </div>
+                                    <div style="width: 60px; height: 60px; background: rgba(255,255,255,0.2); border-radius: 16px; display: flex; align-items: center; justify-content: center; color: white;">
+                                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                    gsap.from('.analytics-header > *, .analytics-body > *', {
+                        opacity: 0,
+                        y: 20,
+                        duration: 0.4,
+                        stagger: 0.08,
+                        ease: 'power3.out'
+                    });
+
+                } else {
+                    throw new Error('Could not retrieve analytics data');
+                }
+            } catch (error) {
+                modalContent.innerHTML = `
+                    <div class="analytics-loading" style="color: #ef4444;">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-bottom: 1rem;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                        <p style="font-weight: 700; font-family: 'Outfit', sans-serif; margin-bottom: 0.5rem; font-size: 1.1rem;">Synchronization Error</p>
+                        <p style="font-size: 0.9rem;">${error.message}</p>
+                        <button onclick="closeAnalyticsModal()" style="margin-top: 1.5rem; padding: 0.75rem 1.5rem; background: #6366f1; color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer;">Close</button>
+                    </div>
+                `;
+            }
+        });
+    });
+
+    // Esc key to close
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeAnalyticsModal();
+    });
+</script>
+{% endblock %}

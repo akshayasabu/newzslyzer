@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="dashboard-wrapper">
+    <main class="dashboard-content">
+        <div class="submission-container animate-in">
+            <div class="submission-header">
+                <a href="/reporter/review/{{ news.id }}" class="back-link">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                    Back to Review
+                </a>
+                <h1 class="page-title">Edit Submission</h1>
+                <p class="subtitle">Refine the user's submission before approval.</p>
+            </div>
+
+            <div class="form-card">
+                <form action="/reporter/edit-user-news/{{ news.id }}" method="POST" class="submission-form">
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label for="title">News Title</label>
+                            <input type="text" id="title" name="title" value="{{ news.title }}" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="category">Category</label>
+                            <select id="category" name="category" required>
+                                <option value="Accident" {% if news.category=='Accident' %}selected{% endif %}>Accident
+                                </option>
+                                <option value="Event" {% if news.category=='Event' %}selected{% endif %}>Event</option>
+                                <option value="Politics" {% if news.category=='Politics' %}selected{% endif %}>Politics
+                                </option>
+                                <option value="Community" {% if news.category=='Community' %}selected{% endif %}>
+                                    Community</option>
+                                <option value="Crime" {% if news.category=='Crime' %}selected{% endif %}>Crime</option>
+                                <option value="Other" {% if news.category=='Other' %}selected{% endif %}>Other</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="location">Location</label>
+                            <input type="text" id="location" name="location" value="{{ news.location }}" required>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label for="content">Full Description</label>
+                            <textarea id="content" name="content" rows="12" required>{{ news.content }}</textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-footer" style="justify-content: flex-end;">
+                        <button type="submit" class="btn btn-primary submit-btn">
+                            Save Changes
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                                <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                                <polyline points="7 3 7 8 15 8"></polyline>
+                            </svg>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+</div>
+
+<style>
+    /* Reusing styles from submit_local_news.html */
+    .submission-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 40px 20px;
+    }
+
+    .submission-header {
+        margin-bottom: 32px;
+    }
+
+    .page-title {
+        font-size: 2.5rem;
+        font-weight: 850;
+        color: var(--text-main);
+        margin-bottom: 8px;
+        letter-spacing: -1px;
+    }
+
+    .subtitle {
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+    }
+
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text-secondary);
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-bottom: 20px;
+        transition: color 0.2s;
+    }
+
+    .back-link:hover {
+        color: var(--primary);
+    }
+
+    .form-card {
+        background: white;
+        border-radius: 24px;
+        padding: 40px;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 24px;
+        margin-bottom: 32px;
+    }
+
+    .full-width {
+        grid-column: span 2;
+    }
+
+    .form-group label {
+        display: block;
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: var(--text-main);
+        margin-bottom: 10px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        padding: 12px 16px;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        background: #f8fafc;
+        font-family: inherit;
+        font-size: 1rem;
+        transition: all 0.2s;
+    }
+
+    .form-footer {
+        display: flex;
+        padding-top: 32px;
+        border-top: 1px solid #f1f5f9;
+    }
+
+    .submit-btn {
+        height: 54px;
+        padding: 0 32px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        border-radius: 14px;
+        background: var(--primary);
+        color: white;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s;
+        box-shadow: 0 10px 20px rgba(0, 153, 255, 0.2);
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,2052 @@
+{% extends "base.html" %}
+{% block nav_left %}{% endblock %}
+
+{% block nav_right %}
+<div style="display: flex; align-items: center; gap: 0.75rem;">
+    <a href="/logout" 
+       style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.2rem; background: #fee2e2; color: #dc2626; border-radius: 12px; font-weight: 700; font-size: 0.875rem; text-decoration: none; border: 1px solid #fecaca; transition: all 0.2s;"
+       onmouseover="this.style.background='#dc2626';this.style.color='white'"
+       onmouseout="this.style.background='#fee2e2';this.style.color='#dc2626'">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+        Logout
+    </a>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 4rem 1.5rem; max-width: 1200px;">
+    <div class="dashboard-header" style="margin-bottom: 2rem;">
+        <h1 style="font-family: 'Outfit', sans-serif; font-size: 2.5rem; margin-bottom: 0.5rem; background: linear-gradient(135deg, #6366F1, #8B5CF6); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+            Admin Central</h1>
+        <p style="color: #64748b; font-size: 1.1rem;">Manage your platform's reporters, users, and advertisements.</p>
+    </div>
+
+    <!-- Summary Cards (Acting as Navigation) -->
+    <div class="stats-overview">
+        <div class="stat-card-premium stat-ads active" onclick="switchTab('ads')" id="nav-ads">
+            <div class="stat-icon-wrapper">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            </div>
+            <div class="stat-info">
+                <div class="label">Advertisements</div>
+                <div class="value">{{ ads|length }}</div>
+            </div>
+        </div>
+        <div class="stat-card-premium stat-users" onclick="switchTab('users')" id="nav-users">
+            <div class="stat-icon-wrapper">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <div class="stat-info">
+                <div class="label">Registered Users</div>
+                <div class="value">{{ users|length }}</div>
+            </div>
+        </div>
+        <div class="stat-card-premium stat-reporters" onclick="switchTab('reporters')" id="nav-reporters" style="flex: 1;">
+            <div class="stat-icon-wrapper">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            </div>
+            <div class="stat-info">
+                <div class="label">Total Reporters</div>
+                <div class="value">{{ reporters|length }}</div>
+            </div>
+        </div>
+        <div class="stat-card-premium stat-advertisers" onclick="switchTab('advertisers')" id="nav-advertisers" style="flex: 1;">
+            <div class="stat-icon-wrapper">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><polyline points="17 11 19 13 23 9"></polyline></svg>
+            </div>
+            <div class="stat-info">
+                <div class="label">Advertisers</div>
+                <div class="value">{{ advertisers|length }}</div>
+            </div>
+        </div>
+    </div>
+        <div class="stat-card-premium stat-missing" onclick="switchTab('missing')" id="nav-missing" style="flex: 1;">
+            <div class="stat-icon-wrapper">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M11 8v3l2 2"/></svg>
+            </div>
+            <div class="stat-info">
+                <div class="label">Pending Reports</div>
+                <div class="value">{{ pending_persons|length }}</div>
+            </div>
+        </div>
+
+
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --primary-soft: #eef2ff;
+            --emerald: #10b981;
+            --emerald-soft: #ecfdf5;
+            --amber: #f59e0b;
+            --amber-soft: #fffbeb;
+            --rose: #f43f5e;
+            --rose-soft: #fff1f2;
+            --indigo: #4f46e5;
+            --violet: #8b5cf6;
+            --slate-50: #f8fafc;
+            --slate-100: #f1f5f9;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+            --slate-400: #94a3b8;
+            --slate-600: #475569;
+            --slate-800: #1e293b;
+            --slate-900: #0f172a;
+            --glass: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.4);
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+
+        body {
+            background: radial-gradient(circle at 0% 0%, #f1f5f9 0%, #e2e8f0 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Summary Cards */
+        .stats-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3.5rem;
+        }
+
+        .stat-card-premium {
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 2rem;
+            border-radius: 28px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-md);
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .stat-card-premium.active {
+            background: white;
+            border-color: currentColor;
+            box-shadow: var(--shadow-xl);
+            transform: translateY(-6px) scale(1.02);
+        }
+
+        .stat-card-premium.active::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.4) 100%);
+            pointer-events: none;
+        }
+
+        .stat-card-premium:hover:not(.active) {
+            transform: translateY(-4px);
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: var(--shadow-lg);
+            border-color: rgba(255, 255, 255, 0.8);
+        }
+
+        .stat-icon-wrapper {
+            width: 64px;
+            height: 64px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.4s ease;
+            box-shadow: inset 0 -2px 4px rgba(0,0,0,0.05);
+        }
+
+        .stat-card-premium:hover .stat-icon-wrapper {
+            transform: scale(1.1) rotate(-8deg);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+
+        .stat-info .label {
+            font-size: 0.813rem;
+            font-weight: 700;
+            color: var(--slate-400);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 0.35rem;
+        }
+
+        .stat-info .value {
+            font-size: 2.25rem;
+            font-weight: 800;
+            color: var(--slate-900);
+            line-height: 1;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        /* Specific Color Accents */
+        .stat-ads { color: var(--primary); }
+        .stat-ads .stat-icon-wrapper { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%); color: white; }
+        
+        .stat-users { color: var(--emerald); }
+        .stat-users .stat-icon-wrapper { background: linear-gradient(135deg, var(--emerald) 0%, #34d399 100%); color: white; }
+        
+        .stat-reporters { color: var(--amber); }
+        .stat-reporters .stat-icon-wrapper { background: linear-gradient(135deg, var(--amber) 0%, #fbbf24 100%); color: white; }
+        
+        .stat-advertisers { color: var(--violet); }
+        .stat-advertisers .stat-icon-wrapper { background: linear-gradient(135deg, var(--violet) 0%, #a78bfa 100%); color: white; }
+        .stat-missing { color: #dc2626; }
+        .stat-missing .stat-icon-wrapper { background: linear-gradient(135deg, #fff0f0, #fecaca); }
+
+        /* Navigation Rail / Tabs */
+        .admin-tabs {
+            display: flex;
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(8px);
+            padding: 0.6rem;
+            border-radius: 20px;
+            gap: 0.6rem;
+            margin-bottom: 3rem;
+            border: 1px solid var(--glass-border);
+            max-width: fit-content;
+        }
+
+        .tab-btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            background: transparent;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--slate-600);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .tab-btn:hover:not(.active) {
+            background: white;
+            color: var(--primary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .tab-btn.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Table Refinements */
+        .user-list {
+            background: white;
+            border-radius: 24px;
+            border: 1px solid var(--slate-200);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            margin-bottom: 3rem;
+            transition: all 0.3s ease;
+        }
+
+        .user-list:hover {
+            box-shadow: var(--shadow-lg);
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .admin-table thead tr {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        }
+
+        .admin-table th {
+            padding: 1.25rem 1.5rem;
+            text-align: left;
+            font-weight: 800;
+            color: var(--slate-400);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            border-bottom: 2px solid var(--slate-100);
+        }
+
+        .admin-table td {
+            padding: 1.25rem 1.5rem;
+            vertical-align: middle;
+            border-bottom: 1px solid var(--slate-100);
+            color: var(--slate-800);
+            font-size: 0.938rem;
+            transition: background 0.2s ease;
+            background: white;
+        }
+
+        .admin-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .admin-table tbody tr:hover td {
+            background: #f8faff;
+        }
+
+        /* UI Components */
+        .badge {
+            padding: 0.5rem 1rem;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            border: 1px solid transparent;
+        }
+        .badge-pending-payment { background: #fffbeb; color: #b45309; border-color: #fde68a; }
+        .badge-under-review { background: #fff7ed; color: #c2410c; border-color: #ffedd5; }
+        .badge-active { background: #ecfdf5; color: #065f46; border-color: #d1fae5; }
+        .badge-rejected { background: #fff1f2; color: #9f1239; border-color: #ffe4e6; }
+        .badge-reporter { background: #f5f3ff; color: #5b21b6; border-color: #ede9fe; }
+
+        .info-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        .info-label {
+            font-size: 0.7rem;
+            font-weight: 800;
+            color: var(--slate-400);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .info-value {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--slate-800);
+        }
+        .btn-chat-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            padding: 0;
+            flex-shrink: 0;
+        }
+        .btn-chat-icon:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
+            filter: brightness(1.1);
+        }
+        .btn-chat-icon:active {
+            transform: translateY(-1px) scale(0.98);
+        }
+        .btn-chat-icon svg {
+            width: 22px;
+            height: 22px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+        }
+
+        .open-ad-chat-modal:hover .ad-image-overlay {
+            opacity: 1 !important;
+        }
+        .open-ad-chat-modal:hover {
+            border-color: var(--primary) !important;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+            transform: translateY(-2px);
+        }
+
+
+        .btn-modern {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 14px;
+            font-size: 0.813rem;
+            font-weight: 800;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            border: 1px solid transparent;
+            text-decoration: none;
+            white-space: nowrap;
+            min-width: max-content;
+            box-shadow: var(--shadow-sm);
+            opacity: 1 !important;
+            visibility: visible !important;
+        }
+
+        .btn-modern:active { transform: scale(0.96); }
+
+        .btn-view { background: white; color: var(--primary); border-color: var(--slate-200); }
+        .btn-view:hover { border-color: var(--primary); background: white; box-shadow: 0 8px 15px -3px rgba(99, 102, 241, 0.2); color: var(--indigo); }
+
+        .btn-approve { background: var(--emerald); color: white; border-color: var(--emerald); }
+        .btn-approve:hover { background: #059669; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); }
+
+        .btn-reject { background: var(--rose); color: white; border-color: var(--rose); }
+        .btn-reject:hover { background: #e11d48; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(244, 63, 94, 0.2); }
+
+        .btn-revoke { background: var(--rose-soft); color: var(--rose); border-color: var(--rose-soft); }
+        .btn-revoke:hover { background: var(--rose); color: white; }
+
+        .paid-status-alert { color: var(--rose) !important; font-weight: 800 !important; }
+        .paid-status-normal { color: var(--emerald) !important; font-weight: 700 !important; }
+
+        /* Helpers */
+        .category-nav, #navBar, .footer { display: none !important; }
+        .tab-content { display: none; opacity: 0; transform: translateY(10px); }
+        .tab-content.active { display: block; opacity: 1; transform: translateY(0); }
+        .tab-content.active tr { opacity: 1 !important; visibility: visible !important; }
+
+    /* Refined Modal Styling */
+    .analytics-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 3000;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+    }
+
+    .analytics-modal-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(15, 23, 42, 0.4);
+        backdrop-filter: blur(12px);
+        transition: all 0.3s ease;
+    }
+
+    .analytics-modal-container {
+        position: relative;
+        width: 100%;
+        max-width: 600px;
+        background: #ffffff;
+        border-radius: 32px;
+        box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.3);
+        overflow: hidden;
+        z-index: 3001;
+        opacity: 0;
+        transform: scale(0.9) translateY(40px);
+        border: 1px solid rgba(100, 116, 139, 0.1);
+    }
+
+    .analytics-header {
+        padding: 2.5rem 2.5rem 1.5rem;
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        border-bottom: 1px solid #e2e8f0;
+        position: relative;
+    }
+
+    .analytics-modal-close {
+        position: absolute;
+        top: 1.5rem;
+        right: 1.5rem;
+        width: 36px;
+        height: 36px;
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: #64748b;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+    }
+
+    .analytics-modal-close:hover {
+        background: #f43f5e;
+        color: white;
+        border-color: #f43f5e;
+        transform: rotate(90deg) scale(1.1);
+    }
+
+    .analytics-body {
+        padding: 2.5rem;
+    }
+
+    .metrics-grid-refined {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+        margin-top: 1.5rem;
+    }
+
+    .metric-item-refined {
+        background: #f8fafc;
+        padding: 1.5rem;
+        border-radius: 20px;
+        border: 1px solid #f1f5f9;
+        transition: all 0.3s ease;
+    }
+
+    .metric-item-refined:hover {
+        background: #ffffff;
+        border-color: #6366f1;
+        transform: translateY(-4px);
+        box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.1);
+    }
+
+    .metric-label-refined {
+        font-size: 0.75rem;
+        font-weight: 800;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    .metric-value-refined {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: #0f172a;
+        font-family: 'Outfit', sans-serif;
+    }
+
+    .analytics-loading {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 5rem;
+        color: #64748b;
+    }
+
+    .spinner {
+        width: 48px;
+        height: 48px;
+        border: 4px solid #f1f5f9;
+        border-top: 4px solid #6366f1;
+        border-radius: 50%;
+        animation: spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        margin-bottom: 1.5rem;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    </style>
+
+
+    <div class="tab-container">
+        <!-- Advertisements Section -->
+        <div id="content-ads" class="tab-content active">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h2 style="font-family: 'Outfit', sans-serif; font-size: 1.75rem; color: var(--slate-900); margin: 0;">Campaign Management</h2>
+                <div style="font-size: 0.875rem; color: var(--slate-400); font-weight: 600;">Total Active: {{ ads|length }}</div>
+            </div>
+            {% if ads %}
+
+            <div class="user-list">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Company & Ad Title</th>
+                            <th>Contact Info</th>
+                            <th>Plan & Duration</th>
+                            <th>Status</th>
+                            <th style="text-align: right;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ad in ads %}
+                        <tr>
+                            <td>
+                                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                                    <!-- Advertiser Identity Group -->
+                                    <div style="display: flex; align-items: center; gap: 0.6rem;">
+                                        <div style="width: 32px; height: 32px; border-radius: 8px; overflow: hidden; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.05); flex-shrink: 0;">
+                                            <img src="{{ ad.user.picture if ad.user and ad.user.picture and 'default_avatar.png' not in ad.user.picture else 'https://ui-avatars.com/api/?name=' + (ad.user.full_name or ad.user.username) + '&background=F5F3FF&color=8B5CF6&bold=true' }}" 
+                                                 alt="" style="width: 100%; height: 100%; object-fit: cover;">
+                                        </div>
+                                        <div style="display: flex; flex-direction: column; line-height: 1.2;">
+                                            <div style="font-weight: 800; color: var(--slate-900); font-size: 0.95rem;">{{ ad.company_name }}</div>
+                                            <div style="font-size: 0.725rem; color: var(--slate-400); font-weight: 700;">Partner: {{ ad.user.full_name or ad.user.username }}</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Campaign Context Group -->
+                                    <div style="display: flex; align-items: center; gap: 0.75rem; background: #f8fafc; padding: 0.4rem 0.6rem; border-radius: 10px; border: 1px solid #f1f5f9; transition: all 0.2s;" onmouseover="this.style.background='white'; this.style.borderColor='var(--primary-light)';" onmouseout="this.style.background='#f8fafc'; this.style.borderColor='#f1f5f9';">
+                                        <div class="open-ad-chat-modal" 
+                                            style="width: 32px; min-width: 32px; height: 32px; border-radius: 6px; background: white; display: flex; align-items: center; justify-content: center; color: var(--primary); overflow: hidden; cursor: pointer; position: relative; border: 1px solid #e2e8f0; transition: all 0.2s;"
+                                            title="View Details & Chat"
+                                            data-ad-id="{{ ad.id }}"
+                                            data-title="{{ ad.title|replace('"', '&quot;') }}"
+                                            data-company="{{ ad.company_name|replace('"', '&quot;') }}"
+                                            data-status="{{ ad.status }}"
+                                            data-plan="{{ ad.plan_name or 'Basic' }}"
+                                            data-duration="{{ ad.duration }}"
+                                            data-image="{{ ad.image_url }}"
+                                            data-user-id="{{ ad.user_id }}"
+                                            data-username="{{ ad.user.username if ad.user else '' }}">
+                                            {% if ad.image_url %}
+                                            <img src="{{ ad.image_url }}" alt="" style="width: 100%; height: 100%; object-fit: cover;">
+                                            {% else %}
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                                            {% endif %}
+                                            <div style="position: absolute; inset: 0; background: rgba(99, 102, 241, 0.7); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s ease;" class="ad-image-overlay">
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                                            </div>
+                                        </div>
+                                        <div style="font-size: 0.8rem; color: var(--slate-600); font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px;" title="{{ ad.title }}">
+                                            {{ ad.title }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="info-group">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color: var(--slate-400);"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                                        <span class="info-value">{{ ad.contact_email or 'No email' }}</span>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color: var(--slate-400);"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                                        <span class="info-value" style="color: var(--slate-500);">{{ ad.contact_phone or 'No phone' }}</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="info-group">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                        <span class="badge" style="background: var(--primary-soft); color: var(--primary); padding: 2px 8px; border-radius: 6px;">{{ ad.plan_name or 'Basic' }}</span>
+                                        <span class="info-value" style="font-weight: 800; color: var(--slate-900);">₹{{ ad.how_much or 'N/A' }}</span>
+                                    </div>
+                                    <div style="font-size: 0.8rem; color: var(--slate-400); font-weight: 600;">
+                                        Duration: <span style="color: var(--slate-600);">{{ ad.duration }} Days</span>
+                                        {% if ad.amount_paid %}
+                                        <span style="margin: 0 6px;">•</span>
+                                        <span class="{% if ad.how_much and ad.amount_paid and ad.how_much.replace('₹', '') != ad.amount_paid.replace('₹', '') %}paid-status-alert{% else %}paid-status-normal{% endif %}">
+                                            Paid: ₹{{ ad.amount_paid }}
+                                        </span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge badge-{{ ad.status.lower().replace(' ', '-') }}">
+                                    <span style="width: 6px; height: 6px; border-radius: 50%; background: currentColor;"></span>
+                                    {{ ad.status }}
+                                </span>
+                            </td>
+                            <td style="text-align: right;">
+                                <div style="display: flex; gap: 0.5rem; justify-content: flex-end; align-items: center;">
+                                    {% if ad.status == 'Payment Under Review' %}
+
+
+                                    <form method="POST" action="{{ url_for('manage_advertisement', ad_id=ad.id) }}" style="display: contents;">
+                                        <input type="hidden" name="action" value="verify_payment">
+                                        <button type="submit" class="btn-modern btn-approve" style="background: var(--primary);">Verify</button>
+                                    </form>
+                                    {% elif ad.status == 'Under Review' %}
+                                    <form method="POST" action="{{ url_for('manage_advertisement', ad_id=ad.id) }}" style="display: contents;">
+                                        <input type="hidden" name="action" value="approve">
+                                        <button type="submit" class="btn-modern btn-approve">Approve</button>
+                                    </form>
+                                    {% elif ad.status == 'Active' and not ad.is_confirmed %}
+                                    <form method="POST" action="{{ url_for('manage_advertisement', ad_id=ad.id) }}" style="display: flex; gap: 0.5rem; align-items: center;">
+                                        <input type="hidden" name="action" value="confirm">
+                                        <select name="placement" class="form-select-sm" style="border-radius: 8px; border: 1px solid var(--slate-200); padding: 4px 24px 4px 8px; font-size: 0.75rem; background: white; color: var(--slate-700); cursor: pointer; appearance: none; background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2210%22%20height%3D%2210%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%2364748b%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C/polyline%3E%3C/svg%3E'); background-repeat: no-repeat; background-position: right 8px center;">
+                                            <option value="bottom">Lower</option>
+                                            <option value="side">Side</option>
+                                        </select>
+                                        <button type="submit" class="btn-modern btn-approve" style="padding: 6px 12px; font-size: 0.75rem; height: auto;">Confirm</button>
+                                    </form>
+                                    {% elif ad.status == 'Active' and ad.is_confirmed %}
+                                    <span style="font-size: 0.75rem; color: var(--emerald); font-weight: 800; display: flex; align-items: center; gap: 4px; background: var(--emerald-soft); padding: 4px 10px; border-radius: 8px; border: 1px solid var(--emerald-soft);">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                        LIVE
+                                    </span>
+                                    {% endif %}
+                                    
+                                    {% if ad.status in ['Under Review', 'Payment Under Review', 'Rejected'] %}
+                                    <form method="POST" action="{{ url_for('manage_advertisement', ad_id=ad.id) }}" style="display: contents;">
+                                        <input type="hidden" name="action" value="reject">
+                                        <button type="submit" class="btn-modern btn-reject" style="width: 38px; height: 38px; padding: 0; justify-content: center; min-width: auto;" title="Reject">
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                                        </button>
+                                    </form>
+                                    {% endif %}
+
+                                    <!-- Delete Button -->
+                                    <button type="button" class="btn-modern btn-reject" 
+                                            onclick="handleDeleteAdInTable({{ ad.id }}, {{ ad.title|tojson|safe }})"
+                                            style="width: 38px; height: 38px; padding: 0; justify-content: center; min-width: auto; background: #fff1f2; color: #f43f5e; border-color: #fee2e2;"
+                                            title="Delete Advertisement">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                            <polyline points="3 6 5 6 21 6"></polyline>
+                                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                            <line x1="10" y1="11" x2="10" y2="17"></line>
+                                            <line x1="14" y1="11" x2="14" y2="17"></line>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div style="text-align: center; padding: 5rem 2rem; background: var(--slate-50); border-radius: 24px; border: 2px dashed var(--slate-200);">
+                <div style="color: var(--slate-400); margin-bottom: 1rem;">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                </div>
+                <p style="color: var(--slate-600); font-size: 1.1rem; font-weight: 600;">No advertisements submitted yet</p>
+                <p style="color: var(--slate-400); font-size: 0.95rem;">Pending ads will appear here for your review.</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Users Section -->
+        <div id="content-users" class="tab-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h2 style="font-family: 'Outfit', sans-serif; font-size: 1.75rem; color: var(--slate-900); margin: 0;">User Directory</h2>
+                <div style="font-size: 0.875rem; color: var(--slate-400); font-weight: 600;">Total Registered: {{ users|length }}</div>
+            </div>
+
+            <div class="user-list">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>User Info</th>
+                            <th>Role</th>
+                            <th style="text-align: right;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    <div style="width: 44px; height: 44px; background: var(--primary-soft); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; color: var(--primary); font-size: 1.1rem; border: 1px solid #e0e7ff; overflow: hidden;">
+                                        {% if user.picture and 'default_avatar.png' not in user.picture %}
+                                        <img src="{{ user.picture }}" alt="" style="width: 100%; height: 100%; object-fit: cover;">
+                                        {% else %}
+                                        {{ user.username[0] | upper }}
+                                        {% endif %}
+                                    </div>
+                                    <div class="info-group">
+                                        <div style="font-weight: 800; color: var(--slate-900);">{{ user.username }}</div>
+                                        <div style="font-size: 0.75rem; color: var(--slate-400); font-weight: 600;">Joined {{ user.joined or 'recently' }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                {% set bg_color = 'var(--primary-soft)' if user.role == 'reporter' else 'var(--slate-100)' %}
+                                {% set text_color = '#3730a3' if user.role == 'reporter' else 'var(--slate-600)' %}
+                                {% set border_color = '#e0e7ff' if user.role == 'reporter' else 'var(--slate-200)' %}
+                                <span class="badge {{ 'badge-reporter' if user.role == 'reporter' else 'badge-default' }}" style="background: {{ bg_color }}; color: {{ text_color }}; border-color: {{ border_color }};">
+                                    {{ user.role | title }}
+                                </span>
+                            </td>
+                            <td style="text-align: right;">
+                                <button class="btn-modern btn-view open-profile-modal"
+                                    data-fullname="{{ user.full_name or user.username }}"
+                                    data-username="{{ user.username }}" 
+                                    data-email="{{ user.email }}"
+                                    data-phone="{{ user.phone or '-' }}" 
+                                    data-location="{{ user.location or '-' }}"
+                                    data-bio="{{ user.bio or 'No bio available.' }}"
+                                    data-picture="{{ user.picture if user.picture and 'default_avatar.png' not in user.picture else 'https://ui-avatars.com/api/?name=' + (user.full_name or user.username) + '&background=E0E7FF&color=4F46E5&bold=true' }}"
+                                    data-joined="{{ user.joined }}" 
+                                    {% if user.role != 'reporter' and user.role != 'admin' %} data-make-reporter-url="{{ url_for('make_reporter', user_id=user.id) }}" {% endif %}>
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                                    Profile
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+        <!-- Reporters Section -->
+        <div id="content-reporters" class="tab-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h2 style="font-family: 'Outfit', sans-serif; font-size: 1.75rem; color: var(--slate-900); margin: 0;">Verified Reporters</h2>
+                <div style="font-size: 0.875rem; color: var(--slate-400); font-weight: 600;">Active Force: {{ reporters|length }}</div>
+            </div>
+            {% if reporters %}
+
+            <div class="user-list">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Reporter</th>
+                            <th>Contact</th>
+                            <th>Location</th>
+                            <th style="text-align: right;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for reporter in reporters %}
+                        <tr>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    <img src="{{ reporter.picture if reporter.picture and 'default_avatar.png' not in reporter.picture else 'https://ui-avatars.com/api/?name=' + (reporter.full_name or reporter.username) + '&background=E0E7FF&color=4F46E5&bold=true' }}"
+                                        alt="{{ reporter.username }}"
+                                        style="width: 48px; height: 48px; border-radius: 12px; object-fit: cover; border: 2px solid var(--slate-100);">
+                                    <div class="info-group">
+                                        <div style="font-weight: 800; color: var(--slate-900);">{{ reporter.full_name or reporter.username }}</div>
+                                        <div style="font-size: 0.8rem; color: var(--slate-400); font-weight: 600;">@{{ reporter.username }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="info-group">
+                                    <div class="info-value" style="font-size: 0.85rem;">{{ reporter.email }}</div>
+                                    <div style="font-size: 0.8rem; color: var(--slate-400); font-weight: 600;">{{ reporter.phone or 'No phone' }}</div>
+                                </div>
+                            </td>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: var(--slate-600); font-weight: 700;">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color: var(--primary);"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                                    {{ reporter.location or '-' }}
+                                </div>
+                            </td>
+                            <td style="text-align: right;">
+                                <div style="display: flex; gap: 0.5rem; justify-content: flex-end; align-items: center;">
+                                    <button class="btn-modern btn-view open-profile-modal"
+                                        data-fullname="{{ reporter.full_name or reporter.username }}"
+                                        data-username="{{ reporter.username }}" 
+                                        data-email="{{ reporter.email }}"
+                                        data-phone="{{ reporter.phone or '-' }}"
+                                        data-location="{{ reporter.location or '-' }}"
+                                        data-bio="{{ reporter.bio or 'No bio available.' }}"
+                                        data-picture="{{ reporter.picture if reporter.picture and 'default_avatar.png' not in reporter.picture else 'https://ui-avatars.com/api/?name=' + (reporter.full_name or reporter.username) + '&background=E0E7FF&color=4F46E5&bold=true' }}"
+                                        data-joined="{{ reporter.joined }}">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                                        Profile
+                                    </button>
+                                    <a href="{{ url_for('revoke_reporter', user_id=reporter.id) }}"
+                                        class="btn-modern btn-reject"
+                                        style="width: 38px; height: 38px; padding: 0; justify-content: center; min-width: auto;"
+                                        onclick="return confirm('Revoke reporter access?')">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="transform: rotate(45deg);"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div style="text-align: center; padding: 5rem 2rem; background: var(--slate-50); border-radius: 24px; border: 2px dashed var(--slate-200);">
+                <div style="color: var(--slate-400); margin-bottom: 1rem;">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                </div>
+                <p style="color: var(--slate-600); font-size: 1.1rem; font-weight: 600;">No reporters assigned yet</p>
+                <p style="color: var(--slate-400); font-size: 0.95rem;">Reporters you promote will be listed here.</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Advertisers Section -->
+        <div id="content-advertisers" class="tab-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h2 style="font-family: 'Outfit', sans-serif; font-size: 1.75rem; color: var(--slate-900); margin: 0;">Advertiser Partners</h2>
+                <div style="font-size: 0.875rem; color: var(--slate-400); font-weight: 600;">Total Partners: {{ advertisers|length }}</div>
+            </div>
+            {% if advertisers %}
+
+            <div class="user-list">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Advertiser</th>
+                            <th>Contact</th>
+                            <th>Active Ads</th>
+                            <th style="text-align: right;">Actions</th>
+                        </tr>
+                    </thead>
+                                           {% for advertiser in advertisers %}
+                        <tr>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    <div style="width: 44px; height: 44px; background: #f5f3ff; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; color: #8b5cf6; font-size: 1.1rem; border: 1px solid #ddd6fe; overflow: hidden;">
+                                        {% if advertiser.picture and 'default_avatar.png' not in advertiser.picture %}
+                                        <img src="{{ advertiser.picture }}" alt="" style="width: 100%; height: 100%; object-fit: cover;">
+                                        {% else %}
+                                        {{ advertiser.username[0] | upper }}
+                                        {% endif %}
+                                    </div>
+                                    <div class="info-group">
+                                        <div style="font-weight: 800; color: var(--slate-900);">{{ advertiser.full_name or advertiser.username }}</div>
+                                        <div style="font-size: 0.8rem; color: var(--slate-400); font-weight: 600;">@{{ advertiser.username }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="info-group">
+                                    <div class="info-value" style="font-size: 0.85rem;">{{ advertiser.email }}</div>
+                                    <div style="font-size: 0.8rem; color: var(--slate-400); font-weight: 600;">{{ advertiser.phone or 'No phone' }}</div>
+                                </div>
+                            </td>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 800; color: var(--primary); font-size: 1rem;">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                                    {{ advertiser.advertisements | length }}
+                                </div>
+                            </td>
+                            <td style="text-align: right;">
+                                <div style="display: flex; gap: 0.75rem; justify-content: flex-end; align-items: center;">
+                                    <button class="btn-modern btn-view open-profile-modal"
+                                        title="View Profile"
+                                        data-fullname="{{ advertiser.full_name or advertiser.username }}"
+                                        data-username="{{ advertiser.username }}" 
+                                        data-email="{{ advertiser.email }}"
+                                        data-phone="{{ advertiser.phone or '-' }}"
+                                        data-location="{{ advertiser.location or '-' }}"
+                                        data-bio="{{ advertiser.bio or 'No bio available.' }}"
+                                        data-picture="{{ advertiser.picture if advertiser.picture and 'default_avatar.png' not in advertiser.picture else 'https://ui-avatars.com/api/?name=' + (advertiser.full_name or advertiser.username) + '&background=F5F3FF&color=8B5CF6&bold=true' }}"
+                                        data-joined="{{ advertiser.joined }}">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                                        Profile
+                                    </button>
+                                    <button class="btn-chat-icon open-support-chat" 
+                                        title="Chat with Advertiser"
+                                        data-user-id="{{ advertiser.id }}" 
+                                        data-username="{{ advertiser.username }}">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </td>
+
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div style="text-align: center; padding: 5rem 2rem; background: var(--slate-50); border-radius: 24px; border: 2px dashed var(--slate-200);">
+                <div style="color: var(--slate-400); margin-bottom: 1rem;">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><polyline points="17 11 19 13 23 9"></polyline></svg>
+                </div>
+                <p style="color: var(--slate-600); font-size: 1.1rem; font-weight: 600;">No advertisers registered yet</p>
+                <p style="color: var(--slate-400); font-size: 0.95rem;">Users with the advertiser role will appear here.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+        <!-- Missing Persons Verification Section -->
+        <div id="content-missing" class="tab-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h2 style="font-family: 'Outfit', sans-serif; font-size: 1.75rem; color: var(--slate-900); margin: 0;">Missing Person Reports — Pending Verification</h2>
+                <div style="font-size: 0.875rem; color: var(--slate-400); font-weight: 600;">{{ pending_persons|length }} pending</div>
+            </div>
+            {% if pending_persons %}
+            <div class="user-list">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Photo</th>
+                            <th>Name / Details</th>
+                            <th>Last Seen</th>
+                            <th>Reporter / Contact</th>
+                            <th>Fake Flags</th>
+                            <th>Submitted</th>
+                            <th style="text-align: right;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for person in pending_persons %}
+                        <tr id="mp-row-{{ person.id }}" style="{{ 'background: #fff8f8; border-left: 4px solid #ef4444;' if person.fake_report_count > 0 else '' }}">
+                            <td>
+                                {% if person.image %}
+                                <img src="{{ person.image }}" alt="{{ person.name }}" style="width:52px;height:52px;object-fit:cover;border-radius:10px;border:1px solid #f1ede4;">
+                                {% else %}
+                                <div style="width:52px;height:52px;background:#f5f2ed;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#c8c2b6;">
+                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                </div>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div style="font-weight:800;color:var(--slate-900);">{{ person.name }}</div>
+                                <div style="font-size:0.8rem;color:var(--slate-400);font-weight:600;">Age {{ person.age }} · {{ person.gender }}</div>
+                            </td>
+                            <td>
+                                <div style="font-weight:700;color:var(--slate-700);font-size:0.9rem;">{{ person.last_seen_location }}</div>
+                                <div style="font-size:0.8rem;color:var(--slate-400);">{{ person.last_seen_date }}</div>
+                            </td>
+                            <td>
+                                <div style="font-weight:700;font-size:0.9rem;">{{ person.contact_name }} <span style="font-weight: 500; font-size: 0.75rem; color: #6366f1;">({{ person.relationship }})</span></div>
+                                <div style="font-size:0.8rem;color:var(--slate-400);">{{ person.contact_phone }}</div>
+                                <div style="font-size:0.75rem;color: #94a3b8; margin-top: 2px;">{{ person.reporter_email }}</div>
+                            </td>
+                            <td>
+                                {% if person.fake_report_count > 0 %}
+                                <div style="display: flex; align-items: center; gap: 0.4rem; color: #ef4444; font-weight: 800; font-size: 0.85rem;">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                                    {{ person.fake_report_count }} Reported
+                                </div>
+                                {% else %}
+                                <span style="color: #cbd5e1; font-size: 0.8rem; font-weight: 600;">Clear</span>
+                                {% endif %}
+                            </td>
+                            <td style="font-size:0.82rem;color:var(--slate-400);font-weight:600;">
+                                {{ person.created_at.strftime('%d %b %Y') }}
+                            </td>
+                            <td style="text-align:right;">
+                                <div style="display:flex;gap:0.6rem;justify-content:flex-end;">
+                                    <button onclick="verifyPerson({{ person.id }}, 'approve')"
+                                        style="display:flex;align-items:center;gap:0.4rem;padding:0.5rem 1rem;background:#ecfdf5;border:1.5px solid #6ee7b7;border-radius:10px;color:#059669;font-weight:800;font-size:0.78rem;cursor:pointer;transition:0.2s;"
+                                        onmouseover="this.style.background='#059669';this.style.color='#fff'"
+                                        onmouseout="this.style.background='#ecfdf5';this.style.color='#059669'">
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                                        Approve
+                                    </button>
+                                    <button onclick="verifyPerson({{ person.id }}, 'reject')"
+                                        style="display:flex;align-items:center;gap:0.4rem;padding:0.5rem 1rem;background:#fff1f2;border:1.5px solid #fda4af;border-radius:10px;color:#e11d48;font-weight:800;font-size:0.78rem;cursor:pointer;transition:0.2s;"
+                                        onmouseover="this.style.background='#e11d48';this.style.color='#fff'"
+                                        onmouseout="this.style.background='#fff1f2';this.style.color='#e11d48'">
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                        Reject
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div style="text-align:center;padding:5rem 2rem;background:var(--slate-50);border-radius:24px;border:2px dashed var(--slate-200);">
+                <div style="color:var(--slate-400);margin-bottom:1rem;">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                </div>
+                <p style="color:var(--slate-600);font-size:1.1rem;font-weight:600;">No pending reports</p>
+                <p style="color:var(--slate-400);font-size:0.95rem;">All submitted missing person reports have been reviewed.</p>
+            </div>
+            {% endif %}
+        </div>
+
+
+<!-- Tab Switching Script -->
+<script>    function switchTab(tabId) {
+        // Hide all tab contents
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.style.display = 'none';
+            tab.classList.remove('active');
+        });
+
+        // Remove active class from all nav items
+        document.querySelectorAll('.stat-card-premium').forEach(nav => {
+            nav.classList.remove('active');
+        });
+
+        // Show selected tab
+        const content = document.getElementById('content-' + tabId);
+        const navItem = document.getElementById('nav-' + tabId);
+        
+        if (content) {
+            content.style.display = (tabId === 'support') ? 'flex' : 'block'; 
+            content.classList.add('active');
+        }
+        
+        if (navItem) {
+            navItem.classList.add('active');
+        }
+
+        // Smoothly transition content
+        const activeContent = document.querySelector('.tab-content.active');
+        const targetContent = document.getElementById('content-' + tabId);
+
+        if (!activeContent || !targetContent || activeContent === targetContent) return;
+
+        if (typeof gsap !== 'undefined') {
+            gsap.to(activeContent, {
+                opacity: 0,
+                y: 10,
+                duration: 0.2,
+                onComplete: () => {
+                    activeContent.classList.remove('active');
+                    targetContent.classList.add('active');
+                    
+                    gsap.fromTo(targetContent, 
+                        { opacity: 0, y: 10 },
+                        { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" }
+                    );
+                }
+            });
+        }
+    }
+
+
+    // Initial Dashboard Entrance Animations
+    document.addEventListener('DOMContentLoaded', () => {
+        if (typeof gsap !== 'undefined') {
+            const tl = gsap.timeline();
+
+            // 1. Title and Description
+            tl.from(".dashboard-header h1", {
+                y: -30,
+                opacity: 0,
+                duration: 0.8,
+                ease: "power3.out"
+            });
+            tl.from(".dashboard-header p", {
+                y: -10,
+                opacity: 0,
+                duration: 0.6,
+                ease: "power2.out"
+            }, "-=0.4");
+
+            // 2. Stats Cards Staggered
+            tl.from(".stat-card-mini", {
+                y: 30,
+                opacity: 0,
+                duration: 0.6,
+                stagger: 0.1,
+                ease: "back.out(1.7)",
+                clearProps: "all"
+            }, "-=0.3");
+
+            // 3. Tabs Navigation
+            tl.from(".admin-tabs", {
+                opacity: 0,
+                y: 20,
+                duration: 0.5,
+                ease: "power2.out",
+                clearProps: "all"
+            }, "-=0.2");
+
+            // 4. Initial Active Tab Rows
+            const activeRows = document.querySelectorAll('.tab-content.active tbody tr');
+            if (activeRows.length > 0) {
+                tl.from(activeRows, {
+                    opacity: 0,
+                    x: -20,
+                    stagger: 0.05,
+                    duration: 0.4,
+                    ease: "power2.out"
+                }, "-=0.2");
+            }
+        }
+    });
+</script>
+
+
+<!-- Edit Reporter Modal -->
+<!-- View Reporter Modal -->
+<!-- View Reporter Modal -->
+<div id="viewReporterModal" class="modal">
+    <div class="modal-overlay" onclick="closeViewModal()"></div>
+    <div class="modal-content animate-in" style="max-width: 440px; padding: 0; border-radius: 28px; overflow: hidden; background: white; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);">
+        <!-- Modern Header -->
+        <div style="position: relative; height: 120px; background: linear-gradient(135deg, #6366f1, #a855f7); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 0;">
+            <button class="modal-close" onclick="closeViewModal()" style="position: absolute; top: 1.25rem; right: 1.25rem; z-index: 10; color: white; background: rgba(255,255,255,0.2); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: none; font-size: 1.5rem; line-height: 1; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">&times;</button>
+            <div style="position: absolute; bottom: -45px; z-index: 5;">
+                <div style="padding: 4px; background: white; border-radius: 24px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);">
+                    <img id="view-picture" src="" alt="Profile"
+                        style="width: 90px; height: 90px; border-radius: 20px; object-fit: cover; display: block;">
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Area -->
+        <div style="padding: 60px 2rem 2rem; text-align: center;">
+            <div style="margin-bottom: 2rem;">
+                <h2 id="view-fullname" style="font-family: 'Outfit', sans-serif; font-size: 1.6rem; color: #1e293b; margin: 0; font-weight: 800; letter-spacing: -0.01em;"></h2>
+                <div id="view-username" style="color: #6366f1; font-size: 0.95rem; font-weight: 700; margin-top: 2px;"></div>
+                <div id="view-email-text" style="color: #64748b; font-size: 0.85rem; font-weight: 500; margin-top: 4px;"></div>
+            </div>
+
+            <!-- Structured Grid Info -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; text-align: left; margin-bottom: 1.5rem;">
+                <div style="background: #f8fafc; padding: 0.85rem; border-radius: 16px; border: 1px solid #f1f5f9;">
+                    <label style="display: block; font-size: 0.65rem; color: #94a3b8; font-weight: 800; text-transform: uppercase; letter-spacing: 0.075em; margin-bottom: 4px;">Phone</label>
+                    <div id="view-phone" style="color: #334155; font-weight: 700; font-size: 0.85rem;"></div>
+                </div>
+                <div style="background: #f8fafc; padding: 0.85rem; border-radius: 16px; border: 1px solid #f1f5f9;">
+                    <label style="display: block; font-size: 0.65rem; color: #94a3b8; font-weight: 800; text-transform: uppercase; letter-spacing: 0.075em; margin-bottom: 4px;">Location</label>
+                    <div id="view-location" style="color: #334155; font-weight: 700; font-size: 0.85rem;"></div>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr; gap: 1rem; text-align: left; margin-bottom: 1.5rem;">
+                <!-- Bio Section -->
+                <div style="background: #f8fafc; padding: 1rem; border-radius: 16px; border: 1px solid #f1f5f9;">
+                    <label style="display: block; font-size: 0.65rem; color: #94a3b8; font-weight: 800; text-transform: uppercase; letter-spacing: 0.075em; margin-bottom: 6px;">Biography</label>
+                    <div id="view-bio" style="color: #475569; font-size: 0.85rem; line-height: 1.5; font-weight: 500;"></div>
+                </div>
+                
+                <!-- Joined Info -->
+                <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; color: #94a3b8; font-size: 0.75rem; font-weight: 600;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21V5a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v16"/><path d="M12 11h.01"/><path d="M12 7h.01"/><path d="M12 15h.01"/><path d="M8 11h.01"/><path d="M8 7h.01"/><path d="M8 15h.01"/><path d="M16 11h.01"/><path d="M16 7h.01"/><path d="M16 15h.01"/></svg>
+                    Partner since <span id="view-joined" style="color: #64748b;"></span>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                <button class="btn-modern" onclick="closeViewModal()" style="flex: 1; background: #f1f5f9; color: #475569; border: none; font-weight: 700; border-radius: 14px; padding: 0.85rem; cursor: pointer; transition: all 0.2s;">Close</button>
+                <a id="view-make-reporter-btn" href="#" class="btn-modern" style="flex: 1.5; background: #6366f1; color: white; border: none; font-weight: 700; border-radius: 14px; padding: 0.85rem; cursor: pointer; text-align: center; text-decoration: none; display: none; transition: all 0.2s;">Promote to Reporter</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Analytics Modal HTML (Now Sibling, not Child) -->
+<div id="analyticsModal" class="analytics-modal">
+    <div class="analytics-modal-overlay" onclick="closeAnalyticsModal()"></div>
+    <div class="analytics-modal-container" id="analyticsModalContainer">
+        <div id="analyticsModalContent">
+            <!-- Content will be injected by JavaScript -->
+        </div>
+    </div>
+</div>
+
+<!-- Ad Details & Chat Modal -->
+<div id="adChatModal" class="analytics-modal">
+    <div class="analytics-modal-overlay" onclick="closeAdChatModal()"></div>
+    <div class="analytics-modal-container" id="adChatModalContainer">
+        <div id="adChatModalContent">
+            <!-- Content will be injected by JavaScript -->
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function openViewModal(button) {
+        const modal = document.getElementById('viewReporterModal');
+
+        // Populate data
+        document.getElementById('view-picture').src = button.getAttribute('data-picture');
+        document.getElementById('view-fullname').textContent = button.getAttribute('data-fullname');
+        document.getElementById('view-username').textContent = '@' + button.getAttribute('data-username');
+        document.getElementById('view-email-text').textContent = button.getAttribute('data-email');
+        document.getElementById('view-location').textContent = button.getAttribute('data-location');
+        document.getElementById('view-joined').textContent = button.getAttribute('data-joined');
+        document.getElementById('view-bio').textContent = button.getAttribute('data-bio');
+
+        // Handle Make Reporter Button
+        const makeReporterBtn = document.getElementById('view-make-reporter-btn');
+        const makeReporterUrl = button.getAttribute('data-make-reporter-url');
+
+        if (makeReporterUrl) {
+            makeReporterBtn.href = makeReporterUrl;
+            makeReporterBtn.style.display = 'block';
+        } else {
+            makeReporterBtn.style.display = 'none';
+        }
+
+        modal.style.display = 'flex';
+        setTimeout(() => {
+            modal.classList.add('active');
+        }, 10);
+    }
+
+    function closeViewModal() {
+        const modal = document.getElementById('viewReporterModal');
+        modal.classList.remove('active');
+        setTimeout(() => {
+            modal.style.display = 'none';
+        }, 300);
+    }
+
+    // Admin Profile Dropdown Toggle - removed, logout is now a direct link
+
+    // --- Ad Chat Modal Logic ---
+    const adChatModal = document.getElementById('adChatModal');
+    const adChatContainer = document.getElementById('adChatModalContainer');
+    const adChatContent = document.getElementById('adChatModalContent');
+
+    // Button delegation for dynamic buttons
+    document.addEventListener('click', (e) => {
+        const adChatBtn = e.target.closest('.open-ad-chat-modal');
+        if (adChatBtn) {
+            e.preventDefault();
+            const d = adChatBtn.dataset;
+            openAdChatModal(d.adId, d.title, d.company, d.status, d.plan, d.duration, d.image, d.userId, d.username);
+            return;
+        }
+
+        const supportChatBtn = e.target.closest('.open-support-chat');
+        if (supportChatBtn) {
+            e.preventDefault();
+            openSupportChat(supportChatBtn.dataset.userId, supportChatBtn.dataset.username);
+            return;
+        }
+
+        const profileBtn = e.target.closest('.open-profile-modal');
+        if (profileBtn) {
+            e.preventDefault();
+            openViewModal(profileBtn);
+            return;
+        }
+    });
+
+
+    window.openAdChatModal = function(adId, title, company, status, plan, duration, imageUrl, userId, username) {
+        adChatModal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        
+        // Use generic avatar if none
+        const displayImageUrl = imageUrl && imageUrl !== 'None' ? imageUrl : 'https://ui-avatars.com/api/?name=' + company + '&background=6366F1&color=fff&bold=true';
+        
+        // Setup initial content
+        adChatContent.innerHTML = `
+            <div class="analytics-header" style="background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; border-bottom: none; position: relative;">
+                <button class="analytics-modal-close" onclick="closeAdChatModal()" title="Close" style="background: rgba(255,255,255,0.2); color: white; border: none;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+                
+                <div style="display: flex; justify-content: space-between; align-items: start;">
+                    <div style="display: flex; gap: 1.5rem; align-items: start;">
+                        <img src="${displayImageUrl}" style="width: 64px; height: 64px; border-radius: 16px; object-fit: cover; border: 2px solid rgba(255,255,255,0.5);">
+                        <div style="flex: 1;">
+                            <h2 style="font-family: 'Outfit', sans-serif; font-size: 1.75rem; margin: 0; font-weight: 800; line-height: 1.2;">${title}</h2>
+                            <div style="display: flex; align-items: center; gap: 0.75rem; margin-top: 0.5rem; opacity: 0.9;">
+                                 <div style="font-weight: 700; font-size: 0.9rem;">${company}</div>
+                                 <div style="width: 4px; height: 4px; border-radius: 50%; background: white;"></div>
+                                 <div style="font-size: 0.85rem; font-weight: 600;">${plan} Plan</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem;">
+                    <div style="display: flex; gap: 0.75rem;">
+                        <span class="badge" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.1); font-size: 0.65rem;">
+                           Status: ${status}
+                        </span>
+                        <span class="badge" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.1); font-size: 0.65rem;">
+                           Partner: ${username || 'N/A'}
+                        </span>
+                    </div>
+                    <button id="deleteAdBtn" class="btn-modern" 
+                        style="background: #f43f5e; color: white; border: none; padding: 0.5rem 1rem; border-radius: 10px; font-weight: 700; font-size: 0.8rem; display: flex; align-items: center; gap: 0.5rem; cursor: pointer; transition: all 0.2s;"
+                        onmouseover="this.style.background='#e11d48'" onmouseout="this.style.background='#f43f5e'">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                        Delete Campaign
+                    </button>
+                </div>
+
+                <!-- Hidden Deletion Reason Form -->
+                <div id="deleteReasonForm" style="display: none; margin-top: 1.5rem; padding: 1rem; background: rgba(0,0,0,0.1); border-radius: 12px; border: 1px solid rgba(255,255,255,0.2);">
+                    <p style="margin: 0 0 0.75rem 0; font-size: 0.85rem; font-weight: 700;">Reason for Deletion (Will be sent to advertiser)</p>
+                    <textarea id="deletionReason" placeholder="e.g., Inappropriate content, Policy violation..." style="width: 100%; border: none; border-radius: 8px; padding: 0.75rem; font-size: 0.85rem; min-height: 80px; outline: none; margin-bottom: 0.75rem; color: #1e293b;"></textarea>
+                    <div style="display: flex; gap: 0.75rem; justify-content: flex-end;">
+                        <button onclick="document.getElementById('deleteReasonForm').style.display='none'" style="background: transparent; color: white; border: 1px solid white; padding: 0.4rem 0.8rem; border-radius: 8px; font-weight: 700; font-size: 0.75rem; cursor: pointer;">Cancel</button>
+                        <button id="confirmDeleteAdBtn" style="background: #ef4444; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 8px; font-weight: 700; font-size: 0.75rem; cursor: pointer;">Confirm Delete</button>
+                    </div>
+                </div>
+            </div>
+            <div class="analytics-body" style="padding: 0; display: flex; flex-direction: column; height: 450px;">
+                <div id="modalMessagesContainer" style="flex: 1; overflow-y: auto; padding: 1.5rem; background: #f8fafc; display: flex; flex-direction: column; gap: 0.75rem;">
+                    <div class="analytics-loading" style="padding: 2rem;">
+                        <div class="spinner" style="width: 32px; height: 32px;"></div>
+                        <p style="font-size: 0.85rem;">Loading conversations...</p>
+                    </div>
+                </div>
+                <!-- Chat Input Form -->
+                <div style="padding: 1.25rem; background: white; border-top: 1px solid #f1f5f9;">
+                    <form id="modalChatForm" style="display: flex; gap: 0.75rem;">
+                        <input type="hidden" name="target_user_id" value="${userId}">
+                        <input type="text" name="message" placeholder="Type a message to the advertiser..." required 
+                            style="flex: 1; border: 1px solid #e2e8f0; border-radius: 12px; padding: 0.75rem 1rem; font-size: 0.9rem; outline: none; transition: all 0.2s;"
+                            onfocus="this.style.borderColor='#6366f1'; this.style.boxShadow='0 0 0 3px rgba(99, 102, 241, 0.1)'"
+                            onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='none'">
+                        <button type="submit" style="background: #6366f1; color: white; border: none; width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        `;
+
+        // Handle Delete Button
+        const deleteAdBtn = document.getElementById('deleteAdBtn');
+        const deleteReasonForm = document.getElementById('deleteReasonForm');
+        const confirmDeleteBtn = document.getElementById('confirmDeleteAdBtn');
+        
+        if (deleteAdBtn && deleteReasonForm && confirmDeleteBtn) {
+            deleteAdBtn.onclick = () => {
+                deleteReasonForm.style.display = deleteReasonForm.style.display === 'none' ? 'block' : 'none';
+                if(deleteReasonForm.style.display === 'block') document.getElementById('deletionReason').focus();
+            };
+            
+            confirmDeleteBtn.onclick = async () => {
+                const reason = document.getElementById('deletionReason').value.trim();
+                if(!reason) return alert('Please provide a reason for deletion.');
+                
+                if(!confirm('Are you sure you want to permanently delete this advertisement? The advertiser will be notified.')) return;
+                
+                const formData = new FormData();
+                formData.append('reason', reason);
+                
+                try {
+                    const response = await fetch(`/api/admin/advertisement/${adId}/delete`, {
+                        method: 'POST',
+                        body: formData
+                    });
+                    if(response.ok) {
+                        alert('Advertisement deleted successfully.');
+                        location.reload(); // Refresh to update list
+                    } else {
+                        const data = await response.json();
+                        alert(data.error || 'Failed to delete advertisement.');
+                    }
+                } catch (err) { console.error('Error deleting ad:', err); }
+            };
+        }
+        
+        if (typeof gsap !== 'undefined' && adChatModal && adChatContainer) {
+            const overlay = adChatModal.querySelector('.analytics-modal-overlay');
+            if(overlay) gsap.to(overlay, { opacity: 1, duration: 0.3 });
+            gsap.to(adChatContainer, {
+                opacity: 1,
+                scale: 1,
+                y: 0,
+                duration: 0.5,
+                ease: 'back.out(1.7)'
+            });
+        }
+        
+        // Fetch and render messages
+        updateFloatingChatContext(userId, username);
+        fetchAndRenderModalMessages(userId);
+        
+        // Wire up form
+        const form = document.getElementById('modalChatForm');
+        if (form) {
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const messageInput = form.querySelector('input[name="message"]');
+                const message = messageInput.value.trim();
+                if(!message) return;
+                
+                try {
+                    const formData = new FormData(form);
+                    const response = await fetch('/chat-support', {
+                        method: 'POST',
+                        body: formData,
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    });
+                    if (response.ok) {
+                        messageInput.value = '';
+                        fetchAndRenderModalMessages(userId);
+                    }
+                } catch (err) { console.error('Error sending message:', err); }
+            });
+        }
+    };
+
+    // Unified Chat States
+    let lastLoadedUserId = null;
+    let lastLoadedUsername = null;
+    let isFloatingChatOpen = false;
+
+    function updateFloatingChatContext(userId, username) {
+        lastLoadedUserId = userId;
+        lastLoadedUsername = username;
+        
+        // Sync with floating widget UI
+        const targetInput = document.getElementById('chatTargetUserId');
+        const headerName = document.getElementById('chatHeaderName');
+        const noChatState = document.getElementById('noChatSelectedState');
+        
+        if (targetInput) targetInput.value = userId;
+        if (headerName) headerName.textContent = 'Chat with ' + username;
+        if (noChatState) noChatState.style.display = 'none';
+        
+        // Mark as read in UI (remove dot if this was a notification source)
+        // We'll let the polling naturally clear it, but you could do it here too
+    }
+
+    async function fetchAndRenderModalMessages(userId) {
+        const container = document.getElementById('modalMessagesContainer');
+        if(!container) return;
+        try {
+            const response = await fetch(`/chat-support/messages/${userId}`);
+            if (response.ok) {
+                const messages = await response.json();
+                if (messages.length === 0) {
+                    container.innerHTML = `<div style="text-align: center; color: #94a3b8; margin-top: 3rem; font-size: 0.9rem;">No messages yet. Send a message to start the conversation.</div>`;
+                    return;
+                }
+                
+                container.innerHTML = messages.map(msg => {
+                    const isMe = msg.is_admin;
+                    const time = new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    return `
+                        <div style="max-width: 80%; align-self: ${isMe ? 'flex-end' : 'flex-start'};">
+                            <div style="padding: 0.75rem 1rem; border-radius: ${isMe ? '18px 18px 2px 18px' : '18px 18px 18px 2px'}; background: ${isMe ? '#6366f1' : 'white'}; color: ${isMe ? 'white' : '#1e293b'}; box-shadow: 0 2px 8px rgba(0,0,0,0.05); font-size: 0.9rem; line-height: 1.4;">
+                                ${msg.message}
+                            </div>
+                            <div style="font-size: 0.65rem; color: #94a3b8; margin-top: 4px; text-align: ${isMe ? 'right' : 'left'}; font-weight: 600;">${time}</div>
+                        </div>
+                    `;
+                }).join('');
+                container.scrollTop = container.scrollHeight;
+            }
+        } catch (err) { console.error('Error fetching messages:', err); }
+    }
+
+    window.closeAdChatModal = function() {
+        if (!adChatModal || !adChatContainer || !adChatContent) return;
+        
+        if (typeof gsap !== 'undefined') {
+            gsap.to(adChatContainer, {
+                opacity: 0,
+                scale: 0.9,
+                y: 40,
+                duration: 0.3,
+                ease: 'power2.in',
+                onComplete: () => {
+                    adChatModal.style.display = 'none';
+                    document.body.style.overflow = '';
+                    adChatContent.innerHTML = '';
+                }
+            });
+            const overlay = adChatModal.querySelector('.analytics-modal-overlay');
+            if(overlay) gsap.to(overlay, { opacity: 0, duration: 0.3 });
+        } else {
+            adChatModal.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+    };
+
+    // --- Analytics Modal Logic ---
+
+    const analyticsModal = document.getElementById('analyticsModal');
+    const modalContainer = document.getElementById('analyticsModalContainer');
+    const modalContent = document.getElementById('analyticsModalContent');
+    const triggers = document.querySelectorAll('.view-analytics-trigger');
+
+    window.openAnalyticsModal = function() {
+        analyticsModal.style.display = 'flex';
+        document.body.style.overflow = 'hidden'; 
+        
+        if (typeof gsap !== 'undefined') {
+            gsap.to(analyticsModal.querySelector('.analytics-modal-overlay'), { opacity: 1, duration: 0.3 });
+            gsap.to(modalContainer, {
+                opacity: 1,
+                scale: 1,
+                y: 0,
+                duration: 0.5,
+                ease: 'back.out(1.7)'
+            });
+        }
+    };
+
+    window.closeAnalyticsModal = function() {
+        if (typeof gsap !== 'undefined') {
+            gsap.to(modalContainer, {
+                opacity: 0,
+                scale: 0.9,
+                y: 40,
+                duration: 0.3,
+                ease: 'power2.in',
+                onComplete: () => {
+                    analyticsModal.style.display = 'none';
+                    document.body.style.overflow = '';
+                    modalContent.innerHTML = '';
+                }
+            });
+            gsap.to(analyticsModal.querySelector('.analytics-modal-overlay'), { opacity: 0, duration: 0.3 });
+        } else {
+            analyticsModal.style.display = 'none';
+            document.body.style.overflow = '';
+            modalContent.innerHTML = '';
+        }
+    };
+
+    triggers.forEach(trigger => {
+        trigger.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const adId = trigger.getAttribute('data-ad-id');
+            const apiUrl = `/api/advertisement/analytics/${adId}`;
+            
+            openAnalyticsModal();
+            
+            // Show improved loading state
+            modalContent.innerHTML = `
+                <div class="analytics-loading">
+                    <div class="spinner"></div>
+                    <p style="font-weight: 700; font-family: 'Outfit', sans-serif; color: #0f172a; font-size: 1.1rem;">Fetching Real-time Insights</p>
+                    <p style="font-size: 0.9rem; margin-top: 0.5rem;">One moment while we process campaign data...</p>
+                </div>
+            `;
+
+            try {
+                const response = await fetch(apiUrl);
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    modalContent.innerHTML = `
+                        <div class="analytics-header">
+                            <button class="analytics-modal-close" onclick="closeAnalyticsModal()" title="Close">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                            </button>
+                            <div style="display: inline-block; background: #e0e7ff; color: #4338ca; padding: 0.4rem 0.8rem; border-radius: 100px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1rem;">
+                                Campaign Performance
+                            </div>
+                            <h2 style="font-family: 'Outfit', sans-serif; font-size: 2rem; color: #0f172a; margin: 0; font-weight: 800; line-height: 1.2;">${data.title}</h2>
+                            <div style="display: flex; gap: 1.5rem; margin-top: 1rem; color: #64748b; font-size: 0.85rem; font-weight: 600;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                                    Started: ${data.created_at}
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                    Ends: ${data.end_date}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="analytics-body">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                                <div>
+                                    <span style="font-size: 0.85rem; color: #64748b; font-weight: 600;">Active Plan:</span>
+                                    <span style="margin-left: 0.5rem; background: #f1f5f9; padding: 0.35rem 0.75rem; border-radius: 8px; color: #0f172a; font-weight: 800; font-size: 0.9rem;">${data.plan}</span>
+                                </div>
+                                <span style="padding: 0.5rem 1rem; border-radius: 100px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; 
+                                    ${data.status === 'approved' ? 'background: #dcfce7; color: #15803d;' : 'background: #fef3c7; color: #b45309;'}">
+                                    ${data.status}
+                                </span>
+                            </div>
+                            <div class="metrics-grid-refined">
+                                <div class="metric-item-refined">
+                                    <span class="metric-label-refined">Total Views</span>
+                                    <div class="metric-value-refined">${data.views.toLocaleString()}</div>
+                                </div>
+                                <div class="metric-item-refined">
+                                    <span class="metric-label-refined">Total Clicks</span>
+                                    <div class="metric-value-refined">${data.clicks.toLocaleString()}</div>
+                                </div>
+                                <div class="metric-item-refined" style="grid-column: span 2; display: flex; align-items: center; justify-content: space-between; background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);">
+                                    <div>
+                                        <span class="metric-label-refined" style="color: rgba(255,255,255,0.8);">Click Through Rate</span>
+                                        <div class="metric-value-refined" style="color: white; font-size: 2.25rem;">${data.ctr}%</div>
+                                    </div>
+                                    <div style="width: 60px; height: 60px; background: rgba(255,255,255,0.2); border-radius: 16px; display: flex; align-items: center; justify-content: center; color: white;">
+                                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                    gsap.from('.analytics-header > *, .analytics-body > *', {
+                        opacity: 0,
+                        y: 20,
+                        duration: 0.4,
+                        stagger: 0.08,
+                        ease: 'power3.out'
+                    });
+
+                } else {
+                    throw new Error('Could not retrieve analytics data');
+                }
+            } catch (error) {
+                modalContent.innerHTML = `
+                    <div class="analytics-loading" style="color: #ef4444;">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-bottom: 1rem;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                        <p style="font-weight: 700; font-family: 'Outfit', sans-serif; margin-bottom: 0.5rem; font-size: 1.1rem;">Synchronization Error</p>
+                        <p style="font-size: 0.9rem;">${error.message}</p>
+                        <button onclick="closeAnalyticsModal()" style="margin-top: 1.5rem; padding: 0.75rem 1.5rem; background: #6366f1; color: white; border: none; border-radius: 12px; font-weight: 700; cursor: pointer;">Close</button>
+                    </div>
+                `;
+            }
+        });
+    });
+
+    // Esc key to close
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeAnalyticsModal();
+    });
+</script>
+    <!-- Support Chat Widget (Floating) -->
+    <div id="supportChatWidget" style="position: fixed; bottom: 30px; right: 30px; z-index: 1000; font-family: 'Inter', sans-serif;">
+        <!-- Chat Button -->
+        <button id="chatToggleBtn" style="position: relative; width: 60px; height: 60px; border-radius: 50%; background: #6366f1; color: white; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); outline: none;">
+            <div id="notificationDot" style="display: none; position: absolute; top: 0; right: 0; width: 14px; height: 14px; background: #f43f5e; border-radius: 50%; border: 2px solid white;"></div>
+            <svg id="chatIcon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+            <svg id="closeIcon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+
+        <!-- Chat Window -->
+        <div id="chatWindow" style="position: absolute; bottom: 80px; right: 0; width: 360px; height: 500px; background: white; border-radius: 24px; box-shadow: 0 15px 45px rgba(0,0,0,0.15); border: 1px solid #f1f5f9; display: none; flex-direction: column; overflow: hidden; transform-origin: bottom right; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); opacity: 0; transform: scale(0.95) translateY(10px);">
+            <!-- Header -->
+            <div style="padding: 1.25rem 1.5rem; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; display: flex; align-items: center; gap: 1rem;">
+                <button id="chatBackButton" style="display: none; background: rgba(255,255,255,0.2); border: none; width: 32px; height: 32px; border-radius: 8px; color: white; cursor: pointer; align-items: center; justify-content: center; transition: all 0.2s;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                </button>
+                <div style="flex: 1;">
+                    <h3 id="chatHeaderName" style="margin: 0; font-size: 1.1rem; font-weight: 800; font-family: 'Outfit', sans-serif;">Support Inbox</h3>
+                    <p id="chatHeaderSub" style="margin: 2px 0 0 0; font-size: 0.75rem; opacity: 0.9; font-weight: 500;">Direct messages from partners</p>
+                </div>
+            </div>
+            
+            <!-- Messages -->
+            <div id="threadListContainer" style="flex: 1; overflow-y: auto; background: white; display: block;">
+                <div id="threadList" style="display: flex; flex-direction: column;">
+                    <div style="padding: 3rem 2rem; text-align: center; color: #94a3b8;">
+                        <div class="spinner" style="width: 24px; height: 24px; margin: 0 auto 1rem;"></div>
+                        <p style="font-size: 0.85rem; font-weight: 600;">Loading conversations...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Messages (Hidden by default until thread selected) -->
+            <div id="supportMessages" style="flex: 1; overflow-y: auto; padding: 1.5rem; display: none; flex-direction: column; gap: 1rem; background: #f8fafc;">
+                <div id="noChatSelectedState" style="text-align: center; margin-top: 4rem; color: #94a3b8; padding: 0 2rem;">
+                    <p style="font-size: 0.95rem; font-weight: 600;">Choose an advertiser to start chatting.</p>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div id="chatFooter" style="padding: 1.25rem; border-top: 1px solid #f1f5f9; background: white; display: none;">
+                <form id="supportChatForm" style="display: flex; gap: 0.75rem;">
+                    <input type="hidden" name="target_user_id" id="chatTargetUserId">
+                    <input type="text" name="message" id="supportChatMessageInput" placeholder="Type your message..." required style="flex: 1; border: 1px solid #e2e8f0; border-radius: 12px; padding: 0.75rem 1rem; font-size: 0.9rem; outline: none; transition: all 0.2s;" onfocus="this.style.borderColor='#6366f1'; this.style.boxShadow='0 0 0 3px rgba(99, 102, 241, 0.1)'" onblur="this.style.borderColor='#e2e8f0'; this.style.boxShadow='none'">
+                    <button type="submit" style="background: #6366f1; color: white; border: none; width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                        </svg>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+
+
+        function openSupportChat(userId, username) {
+            updateFloatingChatContext(userId, username);
+            
+            isFloatingChatOpen = true;
+            
+            // UI Switch: Thread -> Messages
+            document.getElementById('threadListContainer').style.display = 'none';
+            document.getElementById('supportMessages').style.display = 'flex';
+            document.getElementById('chatFooter').style.display = 'block';
+            document.getElementById('chatBackButton').style.display = 'flex';
+            
+            const chatHeaderName = document.getElementById('chatHeaderName');
+            const chatHeaderSub = document.getElementById('chatHeaderSub');
+            if(chatHeaderName) chatHeaderName.textContent = username;
+            if(chatHeaderSub) chatHeaderSub.textContent = 'Direct Support Thread';
+
+            const chatWindow = document.getElementById('chatWindow');
+            if (chatWindow) {
+                chatWindow.style.display = 'flex';
+                setTimeout(() => {
+                    chatWindow.style.opacity = '1';
+                    chatWindow.style.transform = 'scale(1) translateY(0)';
+                }, 10);
+            }
+            
+            document.getElementById('chatIcon').style.display = 'none';
+            document.getElementById('closeIcon').style.display = 'block';
+            document.getElementById('chatToggleBtn').style.background = '#f43f5e';
+            
+            fetchFloatingChatMessages();
+        }
+
+        async function fetchChatThreads() {
+            try {
+                const response = await fetch('/api/admin/chat-threads');
+                if (response.ok) {
+                    const threads = await response.json();
+                    renderChatThreadList(threads);
+                }
+            } catch (error) { console.error('Error fetching threads:', error); }
+        }
+
+        function renderChatThreadList(threads) {
+            const container = document.getElementById('threadList');
+            if (!container) return;
+
+            if (threads.length === 0) {
+                container.innerHTML = `
+                    <div style="padding: 4rem 2rem; text-align: center; color: #94a3b8;">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: 1rem;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                        <p style="font-size: 0.9rem; font-weight: 600;">No conversations yet</p>
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = threads.map(t => {
+                const time = new Date(t.last_message_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                return `
+                    <div class="chat-thread-item" onclick="openSupportChat(${t.user_id}, '${t.username}')" 
+                         style="padding: 1rem 1.25rem; border-bottom: 1px solid #f1f5f9; cursor: pointer; display: flex; align-items: center; gap: 0.85rem; transition: all 0.2s;"
+                         onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='white'">
+                        <div style="width: 44px; height: 44px; border-radius: 12px; background: #eef2ff; position: relative; overflow: hidden; flex-shrink: 0; border: 1px solid #e0e7ff;">
+                            <img src="${t.picture || 'https://ui-avatars.com/api/?name=' + t.username + '&background=6366f1&color=fff&bold=true'}" alt="" style="width: 100%; height: 100%; object-fit: cover;">
+                            ${t.unread_count > 0 ? '<div style="position: absolute; top: 0; right: 0; width: 12px; height: 12px; background: #f43f5e; border: 2px solid white; border-radius: 50%;"></div>' : ''}
+                        </div>
+                        <div style="flex: 1; min-width: 0;">
+                            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 2px;">
+                                <div style="font-weight: 800; color: #1e293b; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${t.full_name}</div>
+                                <div style="font-size: 0.7rem; color: #94a3b8; font-weight: 600;">${time}</div>
+                            </div>
+                            <div style="font-size: 0.75rem; color: ${t.unread_count > 0 ? '#1e293b' : '#64748b'}; font-weight: ${t.unread_count > 0 ? '700' : '500'}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 4px;">
+                                ${t.is_last_from_me ? '<span style="color: #6366f1; font-weight: 800;">You:</span>' : ''}
+                                ${t.last_message}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function showThreadList() {
+            lastLoadedUserId = null;
+            
+            document.getElementById('threadListContainer').style.display = 'block';
+            document.getElementById('supportMessages').style.display = 'none';
+            document.getElementById('chatFooter').style.display = 'none';
+            document.getElementById('chatBackButton').style.display = 'none';
+            
+            const chatHeaderName = document.getElementById('chatHeaderName');
+            const chatHeaderSub = document.getElementById('chatHeaderSub');
+            if(chatHeaderName) chatHeaderName.textContent = 'Support Inbox';
+            if(chatHeaderSub) chatHeaderSub.textContent = 'Direct messages from partners';
+            
+            fetchChatThreads();
+        }
+
+        document.getElementById('chatBackButton')?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            showThreadList();
+        });
+
+        // Toggle handler for floating button
+        document.getElementById('chatToggleBtn')?.addEventListener('click', () => {
+            isFloatingChatOpen = !isFloatingChatOpen;
+            const chatWindow = document.getElementById('chatWindow');
+            
+            if (isFloatingChatOpen) {
+                chatWindow.style.display = 'flex';
+                setTimeout(() => {
+                    chatWindow.style.opacity = '1';
+                    chatWindow.style.transform = 'scale(1) translateY(0)';
+                }, 10);
+                document.getElementById('chatIcon').style.display = 'none';
+                document.getElementById('closeIcon').style.display = 'block';
+                document.getElementById('chatToggleBtn').style.background = '#f43f5e';
+                
+                if (lastLoadedUserId) {
+                    fetchFloatingChatMessages();
+                } else {
+                    showThreadList();
+                }
+            } else {
+                chatWindow.style.opacity = '0';
+                chatWindow.style.transform = 'scale(0.95) translateY(10px)';
+                setTimeout(() => { chatWindow.style.display = 'none'; }, 300);
+                document.getElementById('chatIcon').style.display = 'block';
+                document.getElementById('closeIcon').style.display = 'none';
+                document.getElementById('chatToggleBtn').style.background = '#6366f1';
+            }
+        });
+
+        async function fetchFloatingChatMessages() {
+            if (!lastLoadedUserId) return;
+            try {
+                const response = await fetch(`/chat-support/messages/${lastLoadedUserId}`);
+                if (response.ok) {
+                    const messages = await response.json();
+                    renderFloatingMessages(messages);
+                }
+            } catch (error) { console.error('Error fetching chat:', error); }
+        }
+
+        function renderFloatingMessages(messages) {
+            const container = document.getElementById('supportMessages');
+            if (!container) return;
+            
+            const msgHtml = messages.length > 0 ? messages.map(msg => {
+                const isMe = msg.is_admin;
+                const localTime = new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                return `
+                    <div style="max-width: 85%; align-self: ${isMe ? 'flex-end' : 'flex-start'};">
+                        <div style="padding: 0.85rem 1rem; border-radius: ${isMe ? '18px 18px 2px 18px' : '18px 18px 18px 2px'}; background: ${isMe ? '#6366f1' : '#fff'}; color: ${isMe ? 'white' : '#1e293b'}; box-shadow: ${isMe ? '0 2px 8px rgba(99, 102, 241, 0.2)' : '0 2px 8px rgba(0,0,0,0.05)'}; font-size: 0.9rem; line-height: 1.4; font-weight: 500;">
+                            ${msg.message}
+                        </div>
+                        <div style="font-size: 0.70rem; color: #94a3b8; margin-top: 4px; text-align: ${isMe ? 'right' : 'left'}; font-weight: 600;">${localTime}</div>
+                    </div>
+                `;
+            }).join('') : `<div style="text-align: center; color: #94a3b8; margin-top: 4rem;">No messages yet.</div>`;
+            
+            container.innerHTML = msgHtml;
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // Floating Support Chat Form Submission
+        document.getElementById('supportChatForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const form = e.target;
+            const messageInput = document.getElementById('supportChatMessageInput');
+            const message = messageInput.value.trim();
+            if (!message || !lastLoadedUserId) return;
+
+            const formData = new FormData(form);
+            try {
+                const response = await fetch('/chat-support', {
+                    method: 'POST',
+                    body: formData,
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                });
+                if (response.ok) {
+                    messageInput.value = '';
+                    fetchFloatingChatMessages();
+                }
+            } catch (error) { console.error('Error sending message:', error); }
+        });
+
+        // Combined Polling Loop
+        setInterval(() => {
+            if (isFloatingChatOpen) {
+                if (lastLoadedUserId) {
+                    fetchFloatingChatMessages();
+                    
+                    const adChatModal = document.getElementById('adChatModal');
+                    if (adChatModal && adChatModal.style.display === 'flex') {
+                        fetchAndRenderModalMessages(lastLoadedUserId);
+                    }
+                } else {
+                    fetchChatThreads();
+                }
+            }
+        }, 4000);
+
+        async function checkChatNotifications() {
+            try {
+                const response = await fetch('/api/admin/chat-unread-count');
+                if (response.ok) {
+                    const data = await response.json();
+                    const dot = document.getElementById('notificationDot');
+                    if (dot) {
+                        dot.style.display = data.unread_count > 0 ? 'block' : 'none';
+                    }
+                }
+            } catch (error) { console.error('Error checking notifications:', error); }
+        }
+
+        async function handleDeleteAdInTable(adId, adTitle) {
+            console.log(`[Admin] Initiating Table Deletion for Ad ${adId}: ${adTitle}`);
+            const reason = prompt(`Are you sure you want to delete "${adTitle}"?\n\nPlease enter the reason for deletion:`);
+            
+            if (reason === null) return; // User cancelled
+            if (!reason.trim()) {
+                alert('A reason is required to delete the advertisement.');
+                return;
+            }
+
+            try {
+                const formData = new FormData();
+                formData.append('reason', reason);
+
+                const response = await fetch(`/api/admin/advertisement/${adId}/delete`, {
+                    method: 'POST',
+                    body: formData,
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                });
+
+                if (response.ok) {
+                    alert('Advertisement deleted successfully and advertiser notified.');
+                    location.reload();
+                } else {
+                    const data = await response.json();
+                    console.error('[Admin] Table Deletion failed:', data);
+                    alert(`Error: ${data.error || 'Could not delete advertisement'}`);
+                }
+            } catch (error) {
+                console.error('[Admin] Table Deletion network error:', error);
+                alert('An unexpected network error occurred.');
+            }
+        }
+
+        // Initial check and start polling for notifications
+        checkChatNotifications();
+        setInterval(checkChatNotifications, 10000);
+    
+    async function verifyPerson(id, action) {
+        const row = document.getElementById('mp-row-' + id);
+        const formData = new FormData();
+        formData.append('action', action);
+        try {
+            const res = await fetch('/missing-persons/' + id + '/verify', { method: 'POST', body: formData });
+            const data = await res.json();
+            if (data.success) {
+                if (row) {
+                    row.style.transition = 'opacity 0.3s, transform 0.3s';
+                    row.style.opacity = '0';
+                    row.style.transform = 'translateX(20px)';
+                    setTimeout(() => row.remove(), 300);
+                }
+                // Update pending count badge
+                const badge = document.querySelector('#nav-missing .value');
+                if (badge) {
+                    const cur = parseInt(badge.textContent) || 0;
+                    badge.textContent = Math.max(0, cur - 1);
+                }
+            }
+        } catch(e) {
+            alert('Action failed. Please try again.');
+        }
+    }
+</script>
+</div>
+{% endblock %}

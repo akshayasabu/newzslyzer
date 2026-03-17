@@ -1,0 +1,96 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - generic [ref=e4]:
+      - link "JANAVAAKYA Voice of the People":
+        - /url: /
+        - generic:
+          - generic: JANAVAAKYA
+          - generic: Voice of the People
+  - main [ref=e5]:
+    - generic [ref=e7]:
+      - heading "Advertise With JANAVAAKYA" [level=1] [ref=e8]
+      - paragraph [ref=e9]: Connect your brand with our elite audience through strategic, high-impact placements.
+    - generic [ref=e10]:
+      - generic [ref=e11]:
+        - generic [ref=e12]:
+          - generic [ref=e13]: 2M+
+          - generic [ref=e14]: Monthly Readers
+        - generic [ref=e15]:
+          - generic [ref=e16]: 500K+
+          - generic [ref=e17]: Daily Visitors
+        - generic [ref=e18]:
+          - generic [ref=e19]: 95%
+          - generic [ref=e20]: Engagement Rate
+      - generic [ref=e22]:
+        - generic [ref=e23]:
+          - generic [ref=e24]:
+            - generic [ref=e25]: "1"
+            - generic [ref=e26]: Select Plan
+          - generic [ref=e27]:
+            - generic [ref=e28]: "2"
+            - generic [ref=e29]: Placement
+          - generic [ref=e30]:
+            - generic [ref=e31]: "3"
+            - generic [ref=e32]: Details
+        - generic [ref=e33]:
+          - generic [ref=e34]:
+            - heading "Advertisement Pricing Plans" [level=2] [ref=e35]
+            - paragraph [ref=e36]: Select a plan that fits your campaign goals
+          - generic [ref=e37]:
+            - generic [ref=e38]:
+              - generic [ref=e39]: Maximum Exposure
+              - heading "Basic Outreach" [level=3] [ref=e40]
+              - generic [ref=e41]: ₹100
+              - paragraph [ref=e42]: Perfect for small businesses looking to establish a presence. Reliable visibility across all pages.
+              - list [ref=e43]:
+                - listitem [ref=e44]:
+                  - strong [ref=e45]: Duration
+                  - generic [ref=e46]: 7 Days
+                - listitem [ref=e47]:
+                  - strong [ref=e48]: Benefit
+                  - generic [ref=e49]: Brand Awareness
+              - button "Select Plan" [ref=e50] [cursor=pointer]
+            - generic [ref=e51]:
+              - generic [ref=e52]: Best Engagement
+              - heading "Growth Plus" [level=3] [ref=e53]
+              - generic [ref=e54]: ₹180
+              - paragraph [ref=e55]: Our most popular choice. High engagement with strategic placement where readers spend the most time.
+              - list [ref=e56]:
+                - listitem [ref=e57]:
+                  - strong [ref=e58]: Duration
+                  - generic [ref=e59]: 15 Days
+                - listitem [ref=e60]:
+                  - strong [ref=e61]: Benefit
+                  - generic [ref=e62]: High CTR
+              - button "Select Plan" [ref=e63] [cursor=pointer]
+              - text: MOST POPULAR
+            - generic [ref=e64]:
+              - generic [ref=e65]: Premium Reach
+              - heading "Elite Dominance" [level=3] [ref=e66]
+              - generic [ref=e67]: ₹300
+              - paragraph [ref=e68]: Ultimate brand takeover. Impactful placements that command attention from every visitor.
+              - list [ref=e69]:
+                - listitem [ref=e70]:
+                  - strong [ref=e71]: Duration
+                  - generic [ref=e72]: 30 Days
+                - listitem [ref=e73]:
+                  - strong [ref=e74]: Benefit
+                  - generic [ref=e75]: Full Spectrum
+              - button "Select Plan" [ref=e76] [cursor=pointer]
+      - button [ref=e78] [cursor=pointer]:
+        - img [ref=e79]
+  - contentinfo [ref=e81]:
+    - paragraph [ref=e82]: © 2024 JANAVAAKYA. All rights reserved.
+    - generic [ref=e83]:
+      - link "Home" [ref=e84] [cursor=pointer]:
+        - /url: /
+      - link "News" [ref=e85] [cursor=pointer]:
+        - /url: /category/News
+      - link "Privacy Policy" [ref=e86] [cursor=pointer]:
+        - /url: "#"
+      - link "Terms of Service" [ref=e87] [cursor=pointer]:
+        - /url: "#"
+```

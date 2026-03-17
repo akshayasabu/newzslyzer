@@ -1,0 +1,408 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - generic [ref=e3]:
+      - link "JANAVAAKYA Voice of the People" [ref=e4] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e5]:
+          - img
+          - generic [ref=e9]: JANAVAAKYA
+        - generic [ref=e10]: Voice of the People
+      - link "Logout" [ref=e13] [cursor=pointer]:
+        - /url: /logout
+        - img [ref=e14]
+        - text: Logout
+  - generic [ref=e18]:
+    - generic [ref=e19]:
+      - generic [ref=e21]: UP-TO-DATE NOTICE
+      - generic [ref=e22]: 5 Active Missing Cases — Help bring them home
+    - generic [ref=e24] [cursor=pointer]:
+      - link "Lionel Messi MISSING Lionel Messi Age 35 • Male Spain" [ref=e25]:
+        - /url: /missing-persons?id=6
+        - img "Lionel Messi" [ref=e27]
+        - generic [ref=e28]:
+          - generic [ref=e29]: MISSING
+          - paragraph [ref=e30]: Lionel Messi
+          - paragraph [ref=e31]: Age 35 • Male
+          - paragraph [ref=e32]:
+            - img [ref=e33]
+            - text: Spain
+      - link "Lionel Messi MISSING Lionel Messi Age 35 • Male Spain" [ref=e36]:
+        - /url: /missing-persons?id=4
+        - img "Lionel Messi" [ref=e38]
+        - generic [ref=e39]:
+          - generic [ref=e40]: MISSING
+          - paragraph [ref=e41]: Lionel Messi
+          - paragraph [ref=e42]: Age 35 • Male
+          - paragraph [ref=e43]:
+            - img [ref=e44]
+            - text: Spain
+      - link "Akshaya Sabu MISSING Akshaya Sabu Age 23 • Female Adimaly" [ref=e47]:
+        - /url: /missing-persons?id=3
+        - img "Akshaya Sabu" [ref=e49]
+        - generic [ref=e50]:
+          - generic [ref=e51]: MISSING
+          - paragraph [ref=e52]: Akshaya Sabu
+          - paragraph [ref=e53]: Age 23 • Female
+          - paragraph [ref=e54]:
+            - img [ref=e55]
+            - text: Adimaly
+      - link "MISSING Akshaya Sabu Age 20 • Female khuu" [ref=e58]:
+        - /url: /missing-persons?id=2
+        - img [ref=e61]
+        - generic [ref=e64]:
+          - generic [ref=e65]: MISSING
+          - paragraph [ref=e66]: Akshaya Sabu
+          - paragraph [ref=e67]: Age 20 • Female
+          - paragraph [ref=e68]:
+            - img [ref=e69]
+            - text: khuu
+      - link "Test Person MISSING Test Person Age 30 • Male Unknown" [ref=e72]:
+        - /url: /missing-persons?id=1
+        - img "Test Person" [ref=e74]
+        - generic [ref=e75]:
+          - generic [ref=e76]: MISSING
+          - paragraph [ref=e77]: Test Person
+          - paragraph [ref=e78]: Age 30 • Male
+          - paragraph [ref=e79]:
+            - img [ref=e80]
+            - text: Unknown
+      - link "Lionel Messi MISSING Lionel Messi Age 35 • Male Spain" [ref=e83]:
+        - /url: /missing-persons?id=6
+        - img "Lionel Messi" [ref=e85]
+        - generic [ref=e86]:
+          - generic [ref=e87]: MISSING
+          - paragraph [ref=e88]: Lionel Messi
+          - paragraph [ref=e89]: Age 35 • Male
+          - paragraph [ref=e90]:
+            - img [ref=e91]
+            - text: Spain
+      - link "Lionel Messi MISSING Lionel Messi Age 35 • Male Spain" [ref=e94]:
+        - /url: /missing-persons?id=4
+        - img "Lionel Messi" [ref=e96]
+        - generic [ref=e97]:
+          - generic [ref=e98]: MISSING
+          - paragraph [ref=e99]: Lionel Messi
+          - paragraph [ref=e100]: Age 35 • Male
+          - paragraph [ref=e101]:
+            - img [ref=e102]
+            - text: Spain
+      - link "Akshaya Sabu MISSING Akshaya Sabu Age 23 • Female Adimaly" [ref=e105]:
+        - /url: /missing-persons?id=3
+        - img "Akshaya Sabu" [ref=e107]
+        - generic [ref=e108]:
+          - generic [ref=e109]: MISSING
+          - paragraph [ref=e110]: Akshaya Sabu
+          - paragraph [ref=e111]: Age 23 • Female
+          - paragraph [ref=e112]:
+            - img [ref=e113]
+            - text: Adimaly
+      - link "MISSING Akshaya Sabu Age 20 • Female khuu" [ref=e116]:
+        - /url: /missing-persons?id=2
+        - img [ref=e119]
+        - generic [ref=e122]:
+          - generic [ref=e123]: MISSING
+          - paragraph [ref=e124]: Akshaya Sabu
+          - paragraph [ref=e125]: Age 20 • Female
+          - paragraph [ref=e126]:
+            - img [ref=e127]
+            - text: khuu
+      - link "Test Person MISSING Test Person Age 30 • Male Unknown" [ref=e130]:
+        - /url: /missing-persons?id=1
+        - img "Test Person" [ref=e132]
+        - generic [ref=e133]:
+          - generic [ref=e134]: MISSING
+          - paragraph [ref=e135]: Test Person
+          - paragraph [ref=e136]: Age 30 • Male
+          - paragraph [ref=e137]:
+            - img [ref=e138]
+            - text: Unknown
+  - main [ref=e141]:
+    - generic [ref=e142]:
+      - generic [ref=e143]:
+        - heading "Admin Central" [level=1] [ref=e144]
+        - paragraph [ref=e145]: Manage your platform's reporters, users, and advertisements.
+      - generic [ref=e146]:
+        - generic [ref=e147] [cursor=pointer]:
+          - img [ref=e149]
+          - generic [ref=e151]:
+            - generic [ref=e152]: Advertisements
+            - generic [ref=e153]: "3"
+        - generic [ref=e154] [cursor=pointer]:
+          - img [ref=e156]
+          - generic [ref=e161]:
+            - generic [ref=e162]: Registered Users
+            - generic [ref=e163]: "11"
+        - generic [ref=e164] [cursor=pointer]:
+          - img [ref=e166]
+          - generic [ref=e168]:
+            - generic [ref=e169]: Total Reporters
+            - generic [ref=e170]: "8"
+        - generic [ref=e171] [cursor=pointer]:
+          - img [ref=e173]
+          - generic [ref=e177]:
+            - generic [ref=e178]: Advertisers
+            - generic [ref=e179]: "2"
+      - generic [ref=e180] [cursor=pointer]:
+        - img [ref=e182]
+        - generic [ref=e186]:
+          - generic [ref=e187]: Pending Reports
+          - generic [ref=e188]: "0"
+      - generic [ref=e190]:
+        - generic [ref=e191]:
+          - heading "Campaign Management" [level=2] [ref=e192]
+          - generic [ref=e193]: "Total Active: 3"
+        - table [ref=e195]:
+          - rowgroup [ref=e196]:
+            - row "Company & Ad Title Contact Info Plan & Duration Status Actions" [ref=e197]:
+              - columnheader "Company & Ad Title" [ref=e198]
+              - columnheader "Contact Info" [ref=e199]
+              - columnheader "Plan & Duration" [ref=e200]
+              - columnheader "Status" [ref=e201]
+              - columnheader "Actions" [ref=e202]
+          - rowgroup [ref=e203]:
+            - 'row "FreshMart Supermarket Partner: Ad Partner Weekend Mega Grocery Offers contact@freshmartstore.com +91 91234 56789 Basic Outreach ₹₹25,000 Duration: 7 Days Active LIVE" [ref=e204]':
+              - 'cell "FreshMart Supermarket Partner: Ad Partner Weekend Mega Grocery Offers" [ref=e205]':
+                - generic [ref=e206]:
+                  - generic [ref=e209]:
+                    - generic [ref=e210]: FreshMart Supermarket
+                    - generic [ref=e211]: "Partner: Ad Partner"
+                  - generic [ref=e212]:
+                    - generic "View Details & Chat" [ref=e213] [cursor=pointer]:
+                      - img [ref=e215]
+                    - generic "Weekend Mega Grocery Offers" [ref=e217]
+              - cell "contact@freshmartstore.com +91 91234 56789" [ref=e218]:
+                - generic [ref=e219]:
+                  - generic [ref=e220]:
+                    - img [ref=e221]
+                    - generic [ref=e224]: contact@freshmartstore.com
+                  - generic [ref=e225]:
+                    - img [ref=e226]
+                    - generic [ref=e228]: +91 91234 56789
+              - 'cell "Basic Outreach ₹₹25,000 Duration: 7 Days" [ref=e229]':
+                - generic [ref=e230]:
+                  - generic [ref=e231]:
+                    - generic [ref=e232]: Basic Outreach
+                    - generic [ref=e233]: ₹₹25,000
+                  - generic [ref=e234]: "Duration: 7 Days"
+              - cell "Active" [ref=e235]:
+                - generic [ref=e236]: Active
+              - cell "LIVE" [ref=e238]:
+                - generic [ref=e239]:
+                  - generic [ref=e240]:
+                    - img [ref=e241]
+                    - text: LIVE
+                  - button "Delete Advertisement" [ref=e243] [cursor=pointer]:
+                    - img [ref=e244]
+            - 'row "WASHLAB Partner: Ad Partner Smart Laundry for a Busy Life sijikumardevipriya@gmail.com 9061886693 Plan 1 ₹300 Duration: 7 Days • Paid: ₹50 Active LIVE" [ref=e246]':
+              - 'cell "WASHLAB Partner: Ad Partner Smart Laundry for a Busy Life" [ref=e247]':
+                - generic [ref=e248]:
+                  - generic [ref=e251]:
+                    - generic [ref=e252]: WASHLAB
+                    - generic [ref=e253]: "Partner: Ad Partner"
+                  - generic [ref=e254]:
+                    - generic "View Details & Chat" [ref=e255] [cursor=pointer]:
+                      - img [ref=e257]
+                    - generic "Smart Laundry for a Busy Life" [ref=e259]
+              - cell "sijikumardevipriya@gmail.com 9061886693" [ref=e260]:
+                - generic [ref=e261]:
+                  - generic [ref=e262]:
+                    - img [ref=e263]
+                    - generic [ref=e266]: sijikumardevipriya@gmail.com
+                  - generic [ref=e267]:
+                    - img [ref=e268]
+                    - generic [ref=e270]: "9061886693"
+              - 'cell "Plan 1 ₹300 Duration: 7 Days • Paid: ₹50" [ref=e271]':
+                - generic [ref=e272]:
+                  - generic [ref=e273]:
+                    - generic [ref=e274]: Plan 1
+                    - generic [ref=e275]: ₹300
+                  - generic [ref=e276]: "Duration: 7 Days • Paid: ₹50"
+              - cell "Active" [ref=e277]:
+                - generic [ref=e278]: Active
+              - cell "LIVE" [ref=e280]:
+                - generic [ref=e281]:
+                  - generic [ref=e282]:
+                    - img [ref=e283]
+                    - text: LIVE
+                  - button "Delete Advertisement" [ref=e285] [cursor=pointer]:
+                    - img [ref=e286]
+            - 'row "WASHLAB Partner: Akshaya Sabu Where Your Laundry Gets the Perfect Care sijikumardevipriya@gmail.com 9061886693 Plan 1 ₹N/A Duration: 7 Days Active Lower Confirm" [ref=e288]':
+              - 'cell "WASHLAB Partner: Akshaya Sabu Where Your Laundry Gets the Perfect Care" [ref=e289]':
+                - generic [ref=e290]:
+                  - generic [ref=e293]:
+                    - generic [ref=e294]: WASHLAB
+                    - generic [ref=e295]: "Partner: Akshaya Sabu"
+                  - generic [ref=e296]:
+                    - generic "View Details & Chat" [ref=e297] [cursor=pointer]:
+                      - img [ref=e299]
+                    - generic "Where Your Laundry Gets the Perfect Care" [ref=e301]
+              - cell "sijikumardevipriya@gmail.com 9061886693" [ref=e302]:
+                - generic [ref=e303]:
+                  - generic [ref=e304]:
+                    - img [ref=e305]
+                    - generic [ref=e308]: sijikumardevipriya@gmail.com
+                  - generic [ref=e309]:
+                    - img [ref=e310]
+                    - generic [ref=e312]: "9061886693"
+              - 'cell "Plan 1 ₹N/A Duration: 7 Days" [ref=e313]':
+                - generic [ref=e314]:
+                  - generic [ref=e315]:
+                    - generic [ref=e316]: Plan 1
+                    - generic [ref=e317]: ₹N/A
+                  - generic [ref=e318]: "Duration: 7 Days"
+              - cell "Active" [ref=e319]:
+                - generic [ref=e320]: Active
+              - cell "Lower Confirm" [ref=e322]:
+                - generic [ref=e323]:
+                  - generic [ref=e324]:
+                    - combobox [ref=e325] [cursor=pointer]:
+                      - option "Lower" [selected]
+                      - option "Side"
+                    - button "Confirm" [ref=e326] [cursor=pointer]
+                  - button "Delete Advertisement" [ref=e327] [cursor=pointer]:
+                    - img [ref=e328]
+      - button [ref=e331] [cursor=pointer]:
+        - img [ref=e332]
+  - generic [ref=e334]:
+    - generic [ref=e335]:
+      - generic [ref=e336]:
+        - generic [ref=e337]: JANAVAAKYA
+        - generic [ref=e338]: VOICE OF THE PEOPLE
+      - generic [ref=e342] [cursor=pointer]:
+        - generic [ref=e343]: A
+        - text: MY ACCOUNT ▼
+      - button "Close Menu" [ref=e344] [cursor=pointer]:
+        - img [ref=e345]
+    - generic [ref=e347]:
+      - button "SECTIONS" [ref=e348] [cursor=pointer]
+      - button "ABOUT" [ref=e349] [cursor=pointer]
+    - generic [ref=e351]:
+      - generic [ref=e352]:
+        - generic [ref=e353]:
+          - link "NEWS ›" [ref=e354] [cursor=pointer]:
+            - /url: /category/News
+            - text: NEWS
+            - generic [ref=e355]: ›
+          - link "MOVIES ›" [ref=e356] [cursor=pointer]:
+            - /url: /category/Movies
+            - text: MOVIES
+            - generic [ref=e357]: ›
+          - link "MUSIC ›" [ref=e358] [cursor=pointer]:
+            - /url: /category/Music
+            - text: MUSIC
+            - generic [ref=e359]: ›
+          - link "TRAVEL ›" [ref=e360] [cursor=pointer]:
+            - /url: /category/Travel
+            - text: TRAVEL
+            - generic [ref=e361]: ›
+          - link "ASTRO ›" [ref=e362] [cursor=pointer]:
+            - /url: /category/Astro
+            - text: ASTRO
+            - generic [ref=e363]: ›
+          - link "CAREER ›" [ref=e364] [cursor=pointer]:
+            - /url: /category/Career
+            - text: CAREER
+            - generic [ref=e365]: ›
+          - link "VIDEOS" [ref=e366] [cursor=pointer]:
+            - /url: /category/Videos
+          - link "PODCAST" [ref=e367] [cursor=pointer]:
+            - /url: /category/Podcast
+          - link "GAMES NEW" [ref=e368] [cursor=pointer]:
+            - /url: /category/Games
+            - text: GAMES
+            - generic [ref=e369]: NEW
+          - link "EVENTS" [ref=e370] [cursor=pointer]:
+            - /url: /category/Events
+          - link "MISSING PERSONS NEW" [ref=e371] [cursor=pointer]:
+            - /url: /missing-persons
+            - text: MISSING PERSONS
+            - generic [ref=e372]: NEW
+        - generic [ref=e373]:
+          - link "KERALA ›" [ref=e374] [cursor=pointer]:
+            - /url: /category/Kerala
+            - text: KERALA
+            - generic [ref=e375]: ›
+          - link "LIFE ›" [ref=e376] [cursor=pointer]:
+            - /url: /category/Life
+            - text: LIFE
+            - generic [ref=e377]: ›
+          - link "FOOD ›" [ref=e378] [cursor=pointer]:
+            - /url: /category/Food
+            - text: FOOD
+            - generic [ref=e379]: ›
+          - link "TECH ›" [ref=e380] [cursor=pointer]:
+            - /url: /category/Tech
+            - text: TECH
+            - generic [ref=e381]: ›
+          - link "MKID ›" [ref=e382] [cursor=pointer]:
+            - /url: /category/MKid
+            - text: MKID
+            - generic [ref=e383]: ›
+          - link "FACT CHECK ›" [ref=e384] [cursor=pointer]:
+            - /url: /category/FactCheck
+            - text: FACT CHECK
+            - generic [ref=e385]: ›
+          - link "WEB STORIES" [ref=e386] [cursor=pointer]:
+            - /url: /category/WebStories
+          - link "GRAPHICS" [ref=e387] [cursor=pointer]:
+            - /url: /category/Graphics
+          - link "SMART PICKS ›" [ref=e388] [cursor=pointer]:
+            - /url: /category/SmartPicks
+            - text: SMART PICKS
+            - generic [ref=e389]: ›
+        - generic [ref=e390]:
+          - link "GLOBAL ›" [ref=e391] [cursor=pointer]:
+            - /url: /category/Global
+            - text: GLOBAL
+            - generic [ref=e392]: ›
+          - link "SPORTS ›" [ref=e393] [cursor=pointer]:
+            - /url: /category/sports
+            - text: SPORTS
+            - generic [ref=e394]: ›
+          - link "AUTO ›" [ref=e395] [cursor=pointer]:
+            - /url: /category/Auto
+            - text: AUTO
+            - generic [ref=e396]: ›
+          - link "HEALTH ›" [ref=e397] [cursor=pointer]:
+            - /url: /category/Health
+            - text: HEALTH
+            - generic [ref=e398]: ›
+          - link "AGRI ›" [ref=e399] [cursor=pointer]:
+            - /url: /category/Agri
+            - text: AGRI
+            - generic [ref=e400]: ›
+          - link "BUSINESS & MONEY ›" [ref=e401] [cursor=pointer]:
+            - /url: /category/Business
+            - text: BUSINESS & MONEY
+            - generic [ref=e402]: ›
+          - link "SHORTZ" [ref=e403] [cursor=pointer]:
+            - /url: /category/Shortz
+          - link "PHOTOGALLERY" [ref=e404] [cursor=pointer]:
+            - /url: /category/Photogallery
+          - link "DOODLES" [ref=e405] [cursor=pointer]:
+            - /url: /category/Doodles
+          - link "TOPICS" [ref=e406] [cursor=pointer]:
+            - /url: /category/Topics
+      - generic [ref=e407]:
+        - generic [ref=e408]:
+          - link "📖 E-EDITION" [ref=e409] [cursor=pointer]:
+            - /url: "#"
+            - generic [ref=e410]: 📖
+            - text: E-EDITION
+          - link "📺 VIDEOS" [ref=e411] [cursor=pointer]:
+            - /url: /category/Videos
+            - generic [ref=e412]: 📺
+            - text: VIDEOS
+          - link "🎙️ PODCASTS" [ref=e413] [cursor=pointer]:
+            - /url: /category/Podcast
+            - generic [ref=e414]: 🎙️
+            - text: PODCASTS
+        - generic [ref=e415]:
+          - heading "TODAY'S E-PAPER" [level=4] [ref=e416]
+          - img "E-PAPER" [ref=e418]
+          - button "READ NOW" [ref=e419] [cursor=pointer]
+  - img [ref=e422]
+```

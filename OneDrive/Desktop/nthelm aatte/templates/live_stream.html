@@ -1,0 +1,467 @@
+{% extends "base.html" %}
+
+{% block title %}Live Stream - {{ t('home_title') }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .live-stream-header {
+        background: linear-gradient(135deg, #111827 0%, #000000 100%);
+        color: white;
+        padding: 3rem 0;
+        text-align: center;
+        border-bottom: 2px solid #dc2626;
+    }
+
+    .live-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: rgba(220, 38, 38, 0.1);
+        color: #ef4444;
+        padding: 0.5rem 1rem;
+        border-radius: 9999px;
+        font-weight: 600;
+        font-size: 0.875rem;
+        letter-spacing: 0.05em;
+        margin-bottom: 1.5rem;
+        border: 1px solid rgba(220, 38, 38, 0.2);
+    }
+
+    .live-dot {
+        width: 8px;
+        height: 8px;
+        background-color: #ef4444;
+        border-radius: 50%;
+        animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    @keyframes pulse {
+
+        0%,
+        100% {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        50% {
+            opacity: .5;
+            transform: scale(1.2);
+        }
+    }
+
+    .live-stream-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+        letter-spacing: -0.02em;
+    }
+
+    .live-stream-subtitle {
+        color: #9ca3af;
+        font-size: 1.125rem;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .player-container {
+        max-width: 1200px;
+        margin: -2rem auto 4rem;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        overflow: hidden;
+        position: relative;
+        z-index: 10;
+        border: 1px solid #e5e7eb;
+    }
+
+    .video-wrapper {
+        position: relative;
+        padding-bottom: 56.25%;
+        /* 16:9 Aspect Ratio */
+        height: 0;
+        background-color: #000;
+    }
+
+    .video-wrapper iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
+
+    .stream-info {
+        padding: 2rem;
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 2rem;
+    }
+
+    .stream-details h2 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: #111827;
+    }
+
+    .stream-details p {
+        color: #4b5563;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+    }
+
+    .stream-meta {
+        display: flex;
+        gap: 1.5rem;
+        align-items: center;
+        color: #6b7280;
+        font-size: 0.875rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid #e5e7eb;
+    }
+
+    .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .match-stats {
+        background: #f9fafb;
+        padding: 1.5rem;
+        border-radius: 8px;
+        border: 1px solid #e5e7eb;
+    }
+
+    .match-stats h3 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: #111827;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #e5e7eb;
+    }
+
+    .stat-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.75rem 0;
+        border-bottom: 1px dashed #e5e7eb;
+        color: #4b5563;
+    }
+
+    .stat-row:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .stat-label {
+        font-weight: 500;
+    }
+
+    .stat-value {
+        font-weight: 600;
+        color: #111827;
+    }
+
+    @media (max-width: 768px) {
+        .stream-info {
+            grid-template-columns: 1fr;
+        }
+
+        .live-stream-header {
+            padding: 2rem 1rem 4rem;
+        }
+
+        .live-stream-title {
+            font-size: 2rem;
+        }
+
+        .player-container {
+            margin: -2rem 1rem 2rem;
+            border-radius: 8px;
+        }
+    }
+
+    /* Stream source button styles */
+    .stream-source-btn {
+        transition: all 0.2s ease;
+    }
+
+    .stream-source-btn:hover:not(.active) {
+        background: #f3f4f6 !important;
+        border-color: #d1d5db !important;
+        transform: translateY(-1px);
+    }
+
+    .stream-source-btn.active {
+        box-shadow: 0 4px 6px -1px rgba(220, 38, 38, 0.3);
+    }
+
+    @keyframes pulse {
+
+        0%,
+        100% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.05);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-wrapper editorial-layout">
+    <main class="dashboard-content">
+
+        <div class="live-stream-header">
+            <div class="container">
+                <div class="live-badge">
+                    <div class="live-dot"></div>
+                    {{ current_stream.badge | default('LIVE STREAM') }}
+                </div>
+                <h1 class="live-stream-title">{{ current_stream.title | default('Live Stream') }}</h1>
+                <p class="live-stream-subtitle">{{ current_stream.subtitle | default('Experience the thrill of live
+                    events. High-definition streaming direct from the source. Don\'t miss a moment of the action.') }}
+                </p>
+            </div>
+        </div>
+
+        <div class="container container-content">
+            <div class="player-container">
+                <div class="video-wrapper">
+                    <!-- Professional placeholder for the live stream iframe -->
+                    <!-- Real world implementation would use an actual streaming provider like Mux, AWS IVS, or YouTube Live -->
+                    <iframe id="liveStreamPlayer"
+                        src="{{ current_stream.url if current_stream else 'https://www.youtube.com/embed/jfKfPfyJRdk?autoplay=1&mute=1&live=1&enablejsapi=1' }}"
+                        title="World Cup Live Stream" frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowfullscreen loading="lazy">
+                    </iframe>
+
+                    <!-- Fallback message if iframe fails to load -->
+                    <div id="streamFallback"
+                        style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; color: white; flex-direction: column; align-items: center; justify-content: center; padding: 2rem; text-align: center;">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" style="margin-bottom: 1rem; opacity: 0.5;">
+                            <polygon points="23 7 16 12 23 17 23 7"></polygon>
+                            <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+                        </svg>
+                        <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem;">Stream Temporarily Unavailable</h3>
+                        <p style="color: #9ca3af; margin-bottom: 1.5rem;">The live stream is currently not available.
+                            This could be due to:</p>
+                        <ul
+                            style="color: #9ca3af; text-align: left; margin-bottom: 1.5rem; list-style-position: inside;">
+                            <li>The event hasn't started yet</li>
+                            <li>Network connectivity issues</li>
+                            <li>Browser restrictions on embedded content</li>
+                            <li>Ad blockers or content filters</li>
+                        </ul>
+                        <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+                            <button onclick="reloadStream()"
+                                style="background: #dc2626; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                                Try Again
+                            </button>
+                            {% if available_sources and available_sources|length > 1 %}
+                            <button onclick="showStreamOptions()"
+                                style="background: #4b5563; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                                Try Different Source
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stream Source Selector -->
+                {% if available_sources and available_sources|length > 1 %}
+                <div
+                    style="padding: 1rem; background: #f9fafb; border-top: 1px solid #e5e7eb; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="2" y1="12" x2="22" y2="12"></line>
+                            <path
+                                d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z">
+                            </path>
+                        </svg>
+                        <span style="font-size: 0.875rem; color: #6b7280; font-weight: 500;">Stream Source:</span>
+                        <span style="font-size: 0.875rem; color: #111827; font-weight: 600;">{{ current_stream.name if
+                            current_stream else 'YouTube Live' }}</span>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                        {% for key, source in available_sources.items() %}
+                        <a href="?source={{ key }}"
+                            class="stream-source-btn {% if stream_source == key or (not stream_source and key == 'cricket') %}active{% endif %}"
+                            style="padding: 0.5rem 1rem; border-radius: 6px; font-size: 0.875rem; font-weight: 600; text-decoration: none; transition: all 0.2s; {% if stream_source == key or (not stream_source and key == 'cricket') %}background: #dc2626; color: white;{% else %}background: white; color: #4b5563; border: 1px solid #e5e7eb;{% endif %}">
+                            {{ source.name }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="stream-info">
+                    <div class="stream-details">
+                        <h2>Today's Featured Match</h2>
+                        <p>Join millions of fans worldwide for today's highly anticipated World Cup matchup. Our
+                            dedicated
+                            sports desk brings you uninterrupted, high-quality coverage direct from the venue.</p>
+                        <p>Enjoy multi-angle replays, expert commentary, and real-time statistics as the drama unfolds
+                            on the
+                            pitch. This stream is optimized for all devices, ensuring you have the best seat in the
+                            house
+                            wherever you are.</p>
+
+                        <div class="stream-meta">
+                            <div class="meta-item">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                                Streaming Since: {{ t('online') }}
+                            </div>
+                            <div class="meta-item">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                                1.2M+ Viewers
+                            </div>
+                            <div class="meta-item">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path d="M22 11.08V12a10.04 10.04 0 1 1-5.93-9.14"></path>
+                                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                                </svg>
+                                1080p HD
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="match-stats">
+                        <h3>Stream Overview</h3>
+                        <div class="stat-row">
+                            <span class="stat-label">Event</span>
+                            <span class="stat-value">{{ current_stream.event | default('Live Event') }}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Status</span>
+                            <span class="stat-value" style="color: #10b981;">{{ current_stream.status |
+                                default('Ongoing') }}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Commentary</span>
+                            <span class="stat-value">{{ current_stream.commentary | default('Original/English')
+                                }}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Next Up</span>
+                            <span class="stat-value">{{ current_stream.next_match | default('Check Schedule') }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>
+</main>
+</div>
+
+<script>
+    // Live Stream Player Management
+    (function () {
+        const iframe = document.getElementById('liveStreamPlayer');
+        const fallback = document.getElementById('streamFallback');
+        let loadTimeout;
+        let hasLoaded = false;
+
+        // Function to reload the stream
+        window.reloadStream = function () {
+            if (fallback) fallback.style.display = 'none';
+            if (iframe) {
+                const currentSrc = iframe.src;
+                iframe.src = '';
+                setTimeout(() => {
+                    iframe.src = currentSrc;
+                    checkStreamLoad();
+                }, 100);
+            }
+        };
+
+        // Function to show stream options
+        window.showStreamOptions = function () {
+            const sourceBtns = document.querySelectorAll('.stream-source-btn');
+            if (sourceBtns.length > 0) {
+                sourceBtns[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                // Highlight the buttons briefly
+                sourceBtns.forEach(btn => {
+                    if (!btn.classList.contains('active')) {
+                        btn.style.animation = 'pulse 1s ease-in-out 2';
+                    }
+                });
+            }
+        };
+
+        // Check if iframe loads successfully
+        function checkStreamLoad() {
+            // Set a timeout to show fallback if iframe doesn't load
+            loadTimeout = setTimeout(() => {
+                if (!hasLoaded && fallback) {
+                    console.warn('Live stream iframe failed to load within timeout');
+                    // Don't show fallback automatically - let the iframe try to load
+                    // Users can manually reload if needed
+                }
+            }, 10000); // 10 second timeout
+
+            // Listen for iframe load event
+            if (iframe) {
+                iframe.addEventListener('load', function () {
+                    hasLoaded = true;
+                    clearTimeout(loadTimeout);
+                    console.log('Live stream iframe loaded successfully');
+                });
+
+                iframe.addEventListener('error', function () {
+                    console.error('Live stream iframe failed to load');
+                    if (fallback) {
+                        fallback.style.display = 'flex';
+                    }
+                });
+            }
+        }
+
+        // Initialize on page load
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', checkStreamLoad);
+        } else {
+            checkStreamLoad();
+        }
+
+        // Handle visibility change (pause/resume when tab is hidden/visible)
+        document.addEventListener('visibilitychange', function () {
+            if (document.hidden) {
+                console.log('Page hidden - stream may pause');
+            } else {
+                console.log('Page visible - stream should resume');
+            }
+        });
+
+        // Provide helpful console messages
+        console.log('%c🎥 Live Stream Player Initialized', 'color: #dc2626; font-weight: bold; font-size: 14px;');
+        console.log('If the stream is not loading, check:');
+        console.log('1. Your internet connection');
+        console.log('2. Browser console for errors');
+        console.log('3. Ad blockers or content blockers');
+        console.log('4. Network firewall settings');
+        console.log('5. Try switching to a different stream source');
+    })();
+</script>
+
+{% endblock %}
+```

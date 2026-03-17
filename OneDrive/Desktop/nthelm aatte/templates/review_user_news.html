@@ -1,0 +1,497 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="dashboard-wrapper">
+    <main class="dashboard-content">
+        <div class="review-container animate-in">
+            <div class="review-header">
+                <a href="/reporter" class="back-link">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                    Back to Dashboard
+                </a>
+                <h1 class="page-title">Review Submission</h1>
+                <div class="status-badge status-{{ news.status }}">
+                    {{ news.status | upper }}
+                </div>
+            </div>
+
+            <div class="review-grid">
+                <div class="content-side">
+                    <div class="content-card">
+                        <div class="meta-row">
+                            <span class="category-tag">{{ news.category }}</span>
+                            <span class="location-tag">📍 {{ news.location }}</span>
+                            <span class="date-tag">🕒 Event: {{ news.incident_date }}</span>
+                        </div>
+                        <h2 class="article-title">{{ news.title }}</h2>
+
+                        {% if news.media_url %}
+                        <div class="media-preview">
+                            <img src="{{ news.media_url }}" alt="Submission Proof" class="preview-img" id="proof-image">
+                            <div class="media-actions">
+                                <a href="https://www.google.com/searchbyimage?image_url={{ request.host_url }}{{ news.media_url[1:] }}"
+                                    target="_blank" class="btn btn-sm image-search-btn">
+                                    🔍 Reverse Image Search (Google)
+                                </a>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <div class="article-body">
+                            {{ news.content | replace('\n', '<br>') | safe }}
+                        </div>
+
+                        <div class="submitter-info">
+                            <div class="submitter-main">
+                                Submitted by <strong>{{ news.submitted_by.username }}</strong> on {{
+                                news.created_at.strftime('%Y-%m-%d %H:%M') }}
+                            </div>
+                            <div class="user-credibility">
+                                <span class="cred-label">User Credibility:</span>
+                                <span class="cred-stat" title="Total Submissions">📊 {{ stats.total }} total</span>
+                                <span class="cred-stat approved" title="Approved">✅ {{ stats.approved }} approved</span>
+                                <span class="cred-stat rejected" title="Rejected">❌ {{ stats.rejected }} rejected</span>
+                                {% if stats.total > 0 and stats.rejected / stats.total > 0.5 %}
+                                <span class="cred-badge warning">⚠️ High Rejection Rate</span>
+                                {% elif stats.total == 1 %}
+                                <span class="cred-badge info">🆕 New Submitter</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-side">
+                    <div class="checklist-card">
+                        <h3>Reporter Review Checklist</h3>
+                        <div class="checklist-items">
+                            <label class="check-item">
+                                <input type="checkbox">
+                                <span>Is this a real local incident/event?</span>
+                            </label>
+                            <label class="check-item">
+                                <input type="checkbox">
+                                <span>Is the information clear and specific?</span>
+                            </label>
+                            <label class="check-item">
+                                <input type="checkbox">
+                                <span>Is there proof? (image/video/location)</span>
+                            </label>
+                            <label class="check-item">
+                                <input type="checkbox">
+                                <span>Is it not spam / fake / duplicate?</span>
+                            </label>
+                            <label class="check-item">
+                                <input type="checkbox">
+                                <span>Is it relevant to the public?</span>
+                            </label>
+
+                            <div class="verification-header">Advanced Verification</div>
+
+                            <label class="check-item">
+                                <input type="checkbox">
+                                <span>Cross-checked with Police/Local Media?</span>
+                            </label>
+                            <label class="check-item">
+                                <input type="checkbox">
+                                <span>Image verified (not old/recycled)?</span>
+                            </label>
+                            <label class="check-item">
+                                <input type="checkbox">
+                                <span>User credibility verified?</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="decision-card">
+                        <form action="/reporter/review/{{ news.id }}" method="POST">
+                            <div class="form-group">
+                                <label for="review_note">Internal Review Note (Optional)</label>
+                                <textarea id="review_note" name="review_note" rows="3"
+                                    placeholder="Why are you approving or rejecting this?">{{ news.review_note or '' }}</textarea>
+                            </div>
+
+                            <div class="action-buttons">
+                                <a href="/reporter/edit-user-news/{{ news.id }}" class="btn btn-outline edit-btn">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                        <path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4L18.5 2.5z"></path>
+                                    </svg>
+                                    Edit Content
+                                </a>
+                                <div class="final-actions">
+                                    <button type="submit" name="action" value="reject"
+                                        class="btn btn-danger reject-btn">
+                                        ❌ Reject
+                                    </button>
+                                    <button type="submit" name="action" value="approve"
+                                        class="btn btn-primary approve-btn">
+                                        ✅ Approve & Publish
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<style>
+    .review-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px;
+    }
+
+    .review-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 32px;
+    }
+
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--text-secondary);
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 600;
+        transition: color 0.2s;
+    }
+
+    .back-link:hover {
+        color: var(--primary);
+    }
+
+    .page-title {
+        font-size: 2.2rem;
+        font-weight: 850;
+        color: var(--text-main);
+        letter-spacing: -0.5px;
+    }
+
+    .status-badge {
+        padding: 6px 16px;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 800;
+        letter-spacing: 1px;
+    }
+
+    .status-pending {
+        background: #fef9c3;
+        color: #854d0e;
+    }
+
+    .status-approved {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .status-rejected {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    /* Enhanced Verification Styles */
+    .media-preview {
+        position: relative;
+    }
+
+    .media-actions {
+        padding: 12px;
+        background: #f8fafc;
+        border-top: 1px solid #e2e8f0;
+        display: flex;
+        justify-content: center;
+    }
+
+    .image-search-btn {
+        background: white;
+        color: #475569;
+        border: 1px solid #e2e8f0;
+        font-size: 0.8rem !important;
+        padding: 6px 12px !important;
+        text-decoration: none;
+        border-radius: 6px;
+        transition: all 0.2s;
+    }
+
+    .image-search-btn:hover {
+        background: #f1f5f9;
+        color: var(--primary);
+        border-color: var(--primary);
+    }
+
+    .user-credibility {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-top: 10px;
+        font-style: normal;
+        flex-wrap: wrap;
+    }
+
+    .cred-label {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: var(--text-main);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .cred-stat {
+        font-size: 0.85rem;
+        background: #f1f5f9;
+        padding: 2px 8px;
+        border-radius: 4px;
+        color: #475569;
+    }
+
+    .cred-stat.approved {
+        color: #166534;
+        background: #dcfce7;
+    }
+
+    .cred-stat.rejected {
+        color: #991b1b;
+        background: #fee2e2;
+    }
+
+    .cred-badge {
+        font-size: 0.75rem;
+        font-weight: 800;
+        padding: 2px 10px;
+        border-radius: 50px;
+        text-transform: uppercase;
+    }
+
+    .cred-badge.warning {
+        background: #fee2e2;
+        color: #ef4444;
+        border: 1px solid #fecaca;
+    }
+
+    .cred-badge.info {
+        background: #e0f2fe;
+        color: #0099ff;
+        border: 1px solid #bae6fd;
+    }
+
+    .verification-header {
+        font-size: 0.75rem;
+        font-weight: 800;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        margin: 16px 0 8px 0;
+        padding-bottom: 4px;
+        border-bottom: 2px solid #f1f5f9;
+    }
+
+    .review-grid {
+        display: grid;
+        grid-template-columns: 1fr 380px;
+        gap: 32px;
+    }
+
+    .content-card,
+    .checklist-card,
+    .decision-card {
+        background: white;
+        border-radius: 24px;
+        padding: 32px;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+        margin-bottom: 24px;
+    }
+
+    .meta-row {
+        display: flex;
+        gap: 16px;
+        margin-bottom: 16px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .category-tag {
+        color: var(--primary);
+        background: rgba(0, 153, 255, 0.1);
+        padding: 4px 12px;
+        border-radius: 8px;
+    }
+
+    .location-tag,
+    .date-tag {
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .article-title {
+        font-size: 1.8rem;
+        line-height: 1.2;
+        color: var(--text-main);
+        margin-bottom: 24px;
+    }
+
+    .media-preview {
+        margin-bottom: 24px;
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1px solid #e2e8f0;
+    }
+
+    .preview-img {
+        width: 100%;
+        max-height: 400px;
+        object-fit: contain;
+        background: #f8fafc;
+    }
+
+    .article-body {
+        font-size: 1.1rem;
+        line-height: 1.6;
+        color: #334155;
+        margin-bottom: 32px;
+    }
+
+    .submitter-info {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        padding-top: 24px;
+        border-top: 1px solid #f1f5f9;
+        font-style: italic;
+    }
+
+    .checklist-card h3 {
+        font-size: 1rem;
+        font-weight: 800;
+        margin-bottom: 20px;
+        color: var(--text-main);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .checklist-items {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .check-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 12px;
+        border-radius: 12px;
+        background: #f8fafc;
+        cursor: pointer;
+        transition: background 0.2s;
+        font-size: 0.9rem;
+        color: #475569;
+        font-weight: 500;
+    }
+
+    .check-item:hover {
+        background: #f1f5f9;
+    }
+
+    .check-item input {
+        width: 18px;
+        height: 18px;
+        margin-top: 2px;
+    }
+
+    .decision-card label {
+        display: block;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: var(--text-main);
+        margin-bottom: 8px;
+    }
+
+    .decision-card textarea {
+        width: 100%;
+        padding: 12px;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        background: #f8fafc;
+        font-family: inherit;
+        resize: vertical;
+        margin-bottom: 24px;
+    }
+
+    .action-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .final-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    .btn {
+        padding: 12px 20px;
+        border-radius: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        border: none;
+        transition: all 0.2s;
+    }
+
+    .btn-danger {
+        background: #fee2e2;
+        color: #ef4444;
+    }
+
+    .btn-danger:hover {
+        background: #fecaca;
+    }
+
+    .approve-btn {
+        background: var(--primary);
+        color: white;
+    }
+
+    .approve-btn:hover {
+        background: #007acc;
+        transform: translateY(-2px);
+    }
+
+    .edit-btn {
+        border: 1px solid #e2e8f0;
+        background: white;
+        color: #475569;
+    }
+
+    @media (max-width: 1024px) {
+        .review-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .review-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 16px;
+        }
+    }
+</style>
+{% endblock %}

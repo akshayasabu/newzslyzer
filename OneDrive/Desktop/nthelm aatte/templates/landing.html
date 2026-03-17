@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="landing-page">
+    <section class="landing-hero container">
+        <div class="landing-content animate-in">
+            <span class="badge-live" style="margin-bottom: 1.5rem;"><span class="live-pulse"></span>GLOBAL
+                REVIEWS</span>
+            <h1 class="landing-title news-portal-title">Unbiased Journalism.<br>Global Perspectives.</h1>
+            <p class="landing-subtitle">{{ t('home_subtitle') }}</p>
+        </div>
+        <div class="landing-visual animate-in" style="animation-delay: 0.2s">
+            <div class="newspaper-visual" style="border-radius: 8px; border: 4px solid var(--primary);">
+                <img src="/static/img/landing_hero.jpg" alt="JANAVAAKYA – Voice of the People Editorial" class="hero-bg-img">
+            </div>
+        </div>
+    </section>
+
+</div>
+{% endblock %}
